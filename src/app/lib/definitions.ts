@@ -72,6 +72,45 @@ export type Transactions = CreateTransaction & {
     transaction_id: string
 }
 
+// Recurring transactions types 
+type DayOfMonth = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31
+type WeekDays = 'monday' | 'tuesday' | 'weednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+
+export type CreateRecurringTransaction = {
+    user_id: string,
+    account_id: string,
+    amount: number,
+    transaction_type: TransactionType,
+    transaction_category: ExpenseCategory | IncomeCategory,
+    description?: string,
+    start_date: Date,
+    end_date?: Date,
+    frequency: 'daily' | 'weekly' | 'monthly' | 'yearly',
+    execution_day?: DayOfMonth | null,
+    day_of_week?: WeekDays | null,
+    execution_date?: Date | null
+}
+ 
+export type UpdateRecurringTransaction = {
+    account_id?: string,
+    amount?: number,
+    transaction_type?: TransactionType,
+    transaction_category?: ExpenseCategory | IncomeCategory,
+    description?: string,
+    start_date?: Date,
+    end_date?: Date,
+    frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly',
+    execution_day?: DayOfMonth | null,
+    day_of_week?: WeekDays | null,
+    execution_date?: Date | null
+}
+
+export type RecurringTransaction = CreateRecurringTransaction & {
+    recurring_id: string,
+    last_executed: Date
+}
+
+
 // Budgets types
 export type CreateBudget = {
     user_id: string,
@@ -96,5 +135,24 @@ export type Budget = CreateBudget & {
 
 // Goals types 
 export type CreateGoal = {
-    
+    user_id: string,
+    goal_categoty: 'savings' | 'investment' | 'debt' | 'purchase' | 'lifestyle' | 'family' | 'business' | 'vacations' | 'other'
+    goal_name: string,
+    description?: string,
+    target_amount: string,
+    deadline: Date
+}
+
+export type UpdateGoal = {
+    goal_categoty?: 'savings' | 'investment' | 'debt' | 'purchase' | 'lifestyle' | 'family' | 'business' | 'vacations' | 'other',
+    goal_name?: string,
+    description?: string,
+    target_amount?: string,
+    deadline?: Date
+}
+
+export type Goal = CreateGoal & {
+    goal_id: string,
+    status: string,
+    created_at: Date,
 }
