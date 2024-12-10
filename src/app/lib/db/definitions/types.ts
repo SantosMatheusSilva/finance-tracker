@@ -4,8 +4,8 @@
 
 // User interaction types
 export type User = {
-    id: string,
-    name: string,
+    user_id: number,
+    username: string,
     email: string,
     password: string
 }
@@ -29,11 +29,11 @@ export type UpdateProfileForm = {
 
 // Accounts types 
 export type CreateAccount = {
-    user_id: string,
+    user_id: number,
     account_name: string,
     account_type: 'cash' | 'bank' | 'credit card' | 'investment' ,
     balance: number,
-    currency?: string,
+    currency?: string, // ------> update the accounts table to have enum for usd, eur, gbp. and default to eur.
 }
 
 export type UpdateAccount = {
@@ -44,8 +44,8 @@ export type UpdateAccount = {
 }
 
 export type Account = {
-    id: string,
-    user_id: string,
+    account_id: number,
+    user_id: number,
     account_name: string,
     account_type: 'cash' | 'bank' | 'credit card' | 'investment' ,
     balance: number,
@@ -54,13 +54,14 @@ export type Account = {
 }
 
 // Transactions types 
-export type TransactionType = 'income' | 'expense'
+export type TransactionType = 'Income' | 'Expense'
 export type ExpenseCategory = 'health' | 'food' | 'education' | 'housing' | 'transport' | 'entertaiment' | 'utilities' | 'other'
 export type IncomeCategory = 'salary' | 'extra work' | 'investents' | 'gift' | 'other'
 
+
 export type CreateTransaction = {
-    user_id: string,
-    account_id: string,
+    user_id: number,
+    account_id: number,
     amount: number,
     transaction_type: TransactionType,
     transaction_category: ExpenseCategory | IncomeCategory,
@@ -68,17 +69,74 @@ export type CreateTransaction = {
     transaction_date: Date
 }
 
-export type Transactions = CreateTransaction & {
-    transaction_id: string
+export type Transactions = {
+    transaction_id: number,
+    user_id: number,
+    account_id: number,
+    account_name: string,
+    amount: number,
+    transaction_type: TransactionType,
+    transaction_category: ExpenseCategory | IncomeCategory,
+    description?: string,
+    transaction_date: Date
 }
 
+// expense transaction 
+export type ExpenseTransactionForm = {
+    user_id: number,
+    account_id: number,
+    amount: number,
+    transaction_type: 'Expense',
+    expense_category: ExpenseCategory,
+    income_category: never,
+    description: string,
+    transaction_date: Date
+}
+export type ExpenseTransactions = {
+    transaction_id: number,
+    user_id: number,
+    account_id: number,
+    amount: number,
+    transaction_type: 'Expense',
+    category: ExpenseCategory, // for especifc transactions type queries this field is casted as 'category'.
+    income_category: never,
+    description: string,
+    transaction_date: Date
+}
+
+// income transaction
+export type IncomeTrasactionForm = {
+    user_id: number,
+    account_id: number,
+    amount: number,
+    transaction_type: 'Income',
+    income_category: IncomeCategory,
+    expense_category: never,
+    description: string,
+    transaction_date: Date
+}
+
+export type IncomeTransactions = {
+    transaction_id: number,
+    user_id: number,
+    account_id: number,
+    amount: number,
+    transaction_type: 'Income',
+    category: IncomeCategory, // for especifc transactions type queries this field is casted as 'category'.
+    expense_category: never,
+    description: string,
+    transaction_date: Date
+}
+
+
+
 // Recurring transactions types 
-type DayOfMonth = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31
-type WeekDays = 'monday' | 'tuesday' | 'weednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+export type DayOfMonth = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31
+export type WeekDays = 'monday' | 'tuesday' | 'weednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
 
 export type CreateRecurringTransaction = {
-    user_id: string,
-    account_id: string,
+    user_id: number,
+    account_id: number,
     amount: number,
     transaction_type: TransactionType,
     transaction_category: ExpenseCategory | IncomeCategory,
@@ -106,18 +164,19 @@ export type UpdateRecurringTransaction = {
 }
 
 export type RecurringTransaction = CreateRecurringTransaction & {
-    recurring_id: string,
+    recurring_id: number,
     last_executed: Date
 }
 
 
 // Budgets types
 export type CreateBudget = {
-    user_id: string,
-    budget_category: ExpenseCategory | IncomeCategory,
-    amount: number,
-    start_date: Date,
-    end_date: Date,
+    user_id: number,
+    expense_category: ExpenseCategory,
+    income_category: never,
+    budget_amount: number,
+    period_start: Date,
+    period_end: Date,
 }
 
 export type UpdateBudget = {
@@ -128,15 +187,17 @@ export type UpdateBudget = {
 }
 
 export type Budget = CreateBudget & {
-    budget_id: string,
+    budget_id: number,
+    category: ExpenseCategory, // <---
     status: string,
     created_at: Date
 }
 
 // Goals types 
 export type CreateGoal = {
-    user_id: string,
-    goal_categoty: 'savings' | 'investment' | 'debt' | 'purchase' | 'lifestyle' | 'family' | 'business' | 'vacations' | 'other'
+    user_id: number,
+    income_category: 'savings' | 'investment' | 'debt' | 'purchase' | 'lifestyle' | 'family' | 'business' | 'vacations' | 'other',
+    expense_category: never,
     goal_name: string,
     description?: string,
     target_amount: string,
@@ -144,7 +205,7 @@ export type CreateGoal = {
 }
 
 export type UpdateGoal = {
-    goal_categoty?: 'savings' | 'investment' | 'debt' | 'purchase' | 'lifestyle' | 'family' | 'business' | 'vacations' | 'other',
+    category?: 'savings' | 'investment' | 'debt' | 'purchase' | 'lifestyle' | 'family' | 'business' | 'vacations' | 'other',
     goal_name?: string,
     description?: string,
     target_amount?: string,
@@ -152,7 +213,8 @@ export type UpdateGoal = {
 }
 
 export type Goal = CreateGoal & {
-    goal_id: string,
+    goal_id: number,
     status: string,
     created_at: Date,
+    current_amount: number
 }
