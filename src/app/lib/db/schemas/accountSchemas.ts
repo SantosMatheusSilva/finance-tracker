@@ -16,10 +16,10 @@ export type CreateAccount = z.infer<typeof createAccountSchema>;
 
 // Schema to update an account
 export const updateAccountSchema = z.object({
-    account_name: z.string().optional(),
-    account_type: z.enum(['cash', 'bank', 'credit card', 'investment']).optional(),
-    balance: z.number().optional(),
-    currency: z.enum(['EUR', 'USD', 'GBP']).optional(),
+    account_name: z.string(),
+    account_type: z.enum(['cash', 'bank', 'credit card', 'investment']),
+    balance: z.number(),
+    currency: z.enum(['EUR', 'USD', 'GBP']),
   });
 
 // UpdateAccount type infered from zod updateAccountSchema
@@ -33,7 +33,7 @@ export const accountSchema = z.object({
     account_type: z.enum(['cash', 'bank', 'credit card', 'investment']),
     balance: z.number(),
     currency: z.enum(['EUR', 'USD', 'GBP']),
-    created_at: z.date(),
+    created_at: z.string().date(),
   });
 
 // Account type infered from zod accountSchema

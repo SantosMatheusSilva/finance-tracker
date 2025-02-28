@@ -1,5 +1,5 @@
 import { queryDb } from "../neondb";
-import { Account } from "../definitions/types";
+import { Account } from "../schemas/accountSchemas";
 
 export async function getAccounts(userId: number): Promise<Account[]> {
     try {

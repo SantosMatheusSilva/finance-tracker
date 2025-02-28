@@ -11,57 +11,38 @@ export const getYear = () => {
     return date.getFullYear();
 }
 
-export const formatCurrency = (amount: number) => {
-    return (amount / 100).toLocaleString('en-US', {
+export const getDate = () => {
+    return new Date;
+}
+
+//export const dayAndMonth = getDate().toLocaleDateString('defauylt', { day: '2-digit', month: 'long' })
+export const getDayAndMonth = (date: Date) => {
+    //const date = new Date();
+    const dayAndMonth =  new Intl.DateTimeFormat('en-GB', {
+        day: '2-digit',
+        month: 'short',
+    }).format(date);
+    return dayAndMonth;
+}
+export const formatCurrency = (amount: number): string => {
+    const formattedAmount = new Intl.NumberFormat('en-GB', {
       style: 'currency',
       currency: 'EUR',
-    });
+      minimumFractionDigits: 2,
+    }).format(amount);
+    return formattedAmount;
   };
 
   export const formatDateToLocal = (
     dateStr: string,
-    locale: string = 'en-US',
+    locale: string = 'en-GB',
   ) => {
     const date = new Date(dateStr);
     const options: Intl.DateTimeFormatOptions = {
-      day: 'numeric',
+      day: '2-digit',
       month: 'short',
-      year: 'numeric',
+      year: '2-digit',
     };
     const formatter = new Intl.DateTimeFormat(locale, options);
     return formatter.format(date);
-  };
-
-  
-  export const generatePagination = (currentPage: number, totalPages: number) => {
-    // If the total number of pages is 7 or less,
-    // display all pages without any ellipsis.
-    if (totalPages <= 7) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-  
-    // If the current page is among the first 3 pages,
-    // show the first 3, an ellipsis, and the last 2 pages.
-    if (currentPage <= 3) {
-      return [1, 2, 3, '...', totalPages - 1, totalPages];
-    }
-  
-    // If the current page is among the last 3 pages,
-    // show the first 2, an ellipsis, and the last 3 pages.
-    if (currentPage >= totalPages - 2) {
-      return [1, 2, '...', totalPages - 2, totalPages - 1, totalPages];
-    }
-  
-    // If the current page is somewhere in the middle,
-    // show the first page, an ellipsis, the current page and its neighbors,
-    // another ellipsis, and the last page.
-    return [
-      1,
-      '...',
-      currentPage - 1,
-      currentPage,
-      currentPage + 1,
-      '...',
-      totalPages,
-    ];
   };

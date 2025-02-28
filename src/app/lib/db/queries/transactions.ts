@@ -1,14 +1,13 @@
 import { queryDb } from "../neondb";
-import { Transactions, 
-    ExpenseTransactions, 
-    IncomeTransactions } from "../definitions/types";
-//import { formatCurrency, formatDateToLocal } from "../../utils/utils";
+import { Transaction } from "../schemas/transactionsSchemas";
+import { formatDateToLocal } from "../../utils/utils";
+
 
 
 // Function to query user's transactions
-export async function getTransactions(userId: number): Promise<Transactions[]> {
+export async function getTransactions(userId: number): Promise<Transaction[]> {
     try {
-        const data: Transactions[] = await queryDb`
+        const data: Transaction[] = await queryDb`
         SELECT
             transactions.user_id,
             transactions.transaction_id,
@@ -25,7 +24,12 @@ export async function getTransactions(userId: number): Promise<Transactions[]> {
         ORDER BY transactions.transaction_date DESC;
         `;
 
-        const transactions = [...data];
+        const transactions = data.map((transaction) => ({
+            ...transaction,
+            transaction_date: formatDateToLocal(transaction.transaction_date),
+            //amount: Number(transaction.amount),
+            //amount: formatCurrency(transaction.amount),
+        }));
         return transactions;
     } catch (error) {
         console.error('Database error', error);
@@ -34,9 +38,9 @@ export async function getTransactions(userId: number): Promise<Transactions[]> {
 }
 
 // Funtion to query user's EXPENSES transactions
-export async function getExpenseTransactions(userId: number): Promise<ExpenseTransactions[]> {
+export async function getExpenseTransactions(userId: number): Promise<Transaction[]> {
     try {
-        const data: ExpenseTransactions[] = await queryDb`
+        const data: Transaction[] = await queryDb`
         SELECT
             transactions.user_id,
             transactions.transaction_id,
@@ -52,12 +56,13 @@ export async function getExpenseTransactions(userId: number): Promise<ExpenseTra
         ORDER BY transactions.transaction_date DESC;
         `;
 
-        const expenseTransactions = [... data];
-        
-       /*  const expenseTransactions = data.map((expenses) => ({
-            ...expenses
-        })); */
+        const expenseTransactions = data.map((expense) => ({
+            ...expense,
+            transaction_date: formatDateToLocal(expense.transaction_date)
+        }));
+    
         return expenseTransactions;
+        
 
     } catch (error) {
         console.error('Database error', error);
@@ -66,9 +71,9 @@ export async function getExpenseTransactions(userId: number): Promise<ExpenseTra
 }
 
 // Function to query user's INCOMES transactions
-export async function getIncomeTransactions(userId: number): Promise<IncomeTransactions[]> {
+export async function getIncomeTransactions(userId: number): Promise<Transaction[]> {
     try {
-        const data: IncomeTransactions[] = await queryDb`
+        const data: Transaction[] = await queryDb`
         SELECT
             transactions.user_id,
             transactions.transaction_id,
@@ -84,7 +89,10 @@ export async function getIncomeTransactions(userId: number): Promise<IncomeTrans
         ORDER BY transactions.transaction_date DESC;
         `;
         
-        const incomeTransactions = [...data];
+        const incomeTransactions = data.map((income) => ({
+            ...income,
+            transaction_date: formatDateToLocal(income.transaction_date)
+        }));
         return incomeTransactions;
 
     } catch(error) {

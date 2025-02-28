@@ -25,17 +25,16 @@ export type CreateTransaction = z.infer<typeof createTransactionSchema>
 
 // Schema to update a transaction
 export const updateTransactionSchema = z.object({
-    account_id: z.number().optional(),
+    user_id: z.number(),
+    account_id: z.number(),
     amount: z.number({
         invalid_type_error: 'Please enter a number grater than 0.',
-    }).positive().optional(),
-    transaction_type: z.enum(["Expense", "Income"]).optional(),
-    expense_category: z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]).optional(),
-    income_category: z.enum(['salary', 'extra work', 'investents', 'gift', 'other']).optional(),
-    description: z.string().optional(),
-    transaction_date: z.string({
-        invalid_type_error: 'Please enter a valid date.',
-    }).date().optional(),
+    }).positive(),
+    transaction_type: z.enum(["Expense", "Income"]),
+    expense_category: z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]),
+    income_category: z.enum(['salary', 'extra work', 'investents', 'gift', 'other']),
+    description: z.union([z.string(), z.null()]),
+    transaction_date: z.string().date(),
 })
 
 // UpdateTransaction type infered from zod updateTransactionSchema
@@ -87,13 +86,13 @@ export const transactionsSchema = z.object({
     transaction_id: z.number(),
     user_id: z.number(),
     account_id: z.number(),
-    amount: z.number().positive(),
+    amount:  z.number().positive(),
     transaction_type: z.enum(["Expense", "Income"]),
     income_category: z.union([z.enum(['salary', 'extra work', 'investents', 'gift', 'other']), z.null()]),
     expense_category: z.union([z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]), z.null()]),
     description: z.string().nullable(),
-    transaction_date: z.date(),
-    created_at: z.date(),
+    transaction_date: z.string().date(),
+    created_at: z.string().date(),
 })
 
 // Transactions type infered from zod transactionSchema

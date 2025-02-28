@@ -1,5 +1,6 @@
 import { queryDb } from "../neondb";
-import { Budget } from "../definitions/types";
+import { Budget } from "../schemas/budgetsSchemas";
+import { formatDateToLocal} from "../../utils/utils";
 
 export async function getBudgets(userId: number): Promise<Budget[]> {
     try {
@@ -16,7 +17,11 @@ export async function getBudgets(userId: number): Promise<Budget[]> {
         WHERE budgets.user_id = ${userId}
         ORDER BY budgets.period_end DESC
         `;
-        const budgets = [...data];
+        const budgets = data.map((budget) => ({
+            ...budget,
+            period_start: formatDateToLocal(budget.period_start),
+            period_end: formatDateToLocal(budget.period_end)
+        }))
         return budgets;
     } catch (error) {
         console.error('Database error', error);

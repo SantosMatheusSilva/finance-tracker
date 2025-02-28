@@ -9,14 +9,25 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@heroui/breadcrumbs": "^2.2.6",
+    "@heroui/system": "^2.4.6",
+    "@heroui/theme": "^2.4.5",
     "@neondatabase/serverless": "^0.10.3",
+    "@nextui-org/react": "^2.6.8",
     "@vercel/postgres": "^0.10.0",
-    "next": "15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "apexcharts": "^4.3.0",
+    "bcrypt": "^5.1.1",
+    "framer-motion": "^11.14.1",
+    "next": "^15.1.6",
+    "next-auth": "^5.0.0-beta.25",
+    "react": "^18.3.1",
+    "react-apexcharts": "^1.7.0",
+    "react-dom": "^18.3.1",
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

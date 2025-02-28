@@ -149,7 +149,7 @@ export type CreateRecurringTransaction = {
     execution_date?: Date | null
 }
  
-export type UpdateRecurringTransaction = {
+/* export type UpdateRecurringTransaction = {
     account_id?: string,
     amount?: number,
     transaction_type?: TransactionType,
@@ -161,7 +161,7 @@ export type UpdateRecurringTransaction = {
     execution_day?: DayOfMonth | null,
     day_of_week?: WeekDays | null,
     execution_date?: Date | null
-}
+} */
 
 export type RecurringTransaction = CreateRecurringTransaction & {
     recurring_id: number,
