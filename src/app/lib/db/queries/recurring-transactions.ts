@@ -1,6 +1,6 @@
 import { queryDb } from "../neondb";
 import { RecurringTransactions } from "../schemas/recurringTransactionsSchemas";
-import { formatDateToLocal, formatCurrency } from "../../utils/utils";
+import { formatDateToLocal } from "../../utils/utils";
 
 // Function to query user's recurring transactions
 export async function getRecurringTransactions(userId: number): Promise<RecurringTransactions[]> {
@@ -30,9 +30,9 @@ export async function getRecurringTransactions(userId: number): Promise<Recurrin
             //amount: formatCurrency(recurringTransaction.amount),
             start_date: formatDateToLocal(recurringTransaction.start_date),
             end_date: formatDateToLocal(recurringTransaction.end_date ?? ''),
-            execution_date: formatDateToLocal(recurringTransaction.execution_date?.toString() ?? ''),
+            execution_date: recurringTransaction.execution_date,
         }));
-        return data;
+        return recurringTransactions;
     } catch (error) {
         console.error('Database error', error);
         throw new Error('Failed to fetch recurring transactions.');

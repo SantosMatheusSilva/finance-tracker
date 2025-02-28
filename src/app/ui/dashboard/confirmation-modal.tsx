@@ -16,7 +16,7 @@ interface BaseModalPops extends ModalProps {
     title?: string;
     message?: string;
     onClose: () => void;
-    onConfirm: (...args: any[]) => void;
+    onConfirm: () => void;
 }
 export function ConfirmationModal({
     title = "Confirmation",
@@ -31,10 +31,10 @@ export function ConfirmationModal({
     onClose,
     ...rest
 } : BaseModalPops) : JSX.Element {
-    const { isOpen, onOpen, onClose: modalOnClose } = useDisclosure()
+    const { isOpen, onClose: handleClose } = useDisclosure()
 
     return(
-        <Modal isOpen={isOpen} onClose={onClose} size={size} radius={radius} shadow={shadow} backdrop={backdrop} placement={placement} closeButton={closeButton} {...rest}>
+        <Modal isOpen={isOpen} onClose={handleClose} size={size} radius={radius} shadow={shadow} backdrop={backdrop} placement={placement} closeButton={closeButton} {...rest}>
             <ModalContent>
                 <ModalHeader>
                     {title}
@@ -45,8 +45,8 @@ export function ConfirmationModal({
                     </p>
                 </ModalBody>
                 <ModalFooter>
-                        <CancelButton children={'No'} onPress={onClose}/>
-                        <ConfirmButton children={'Yes'} onPress={() => onConfirm()}/>
+                        <CancelButton onPress={onClose}>No</CancelButton>
+                        <ConfirmButton onPress={() => onConfirm()}>Yes</ConfirmButton>
                 </ModalFooter>
             </ModalContent>
         </Modal>

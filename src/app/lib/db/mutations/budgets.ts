@@ -7,7 +7,7 @@ import {
 } from '../schemas/budgetsSchemas';
 
 // Mutation function to insert a new budget 
-export async function insertBudget(formdata: FormData): Promise <{ message: string; errors?: {}}> {
+export async function insertBudget(formdata: FormData): Promise <{ message: string; errors?: object }> {
     // First validate the data from the form fields
     const validatedForm = createBudgetSchema.safeParse({
         user_id: formdata.get('user_id'),
@@ -44,7 +44,7 @@ export async function insertBudget(formdata: FormData): Promise <{ message: stri
 }
 
 // Mutation function to update an existing budget
-export async function updateBudget(budget_id: number, formdata: FormData): Promise <{ message: string; errors?: {}}> {
+export async function updateBudget(budget_id: number, formdata: FormData): Promise <{ message: string; errors?: object }> {
     // First validate the data from the form fields
     const validatedForm = updateBudgetSchema.safeParse({
         expense_category: formdata.get('expense_category'),
@@ -87,7 +87,7 @@ export async function updateBudget(budget_id: number, formdata: FormData): Promi
 }
 
 // Mutation function to Delete a Budget
-export async function deleteBudget(budget_id: number): Promise <{ message: string; errors?: {}}> {
+export async function deleteBudget(budget_id: number): Promise <{ message: string; errors?: object }> {
     // Insertion block TRY
     try {
         await queryDb`

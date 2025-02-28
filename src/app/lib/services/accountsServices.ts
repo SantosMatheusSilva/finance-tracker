@@ -1,5 +1,5 @@
 import { getAccounts } from "../db/queries/accounts";
-import { formatCurrency } from "../utils/utils";
+
 
 export async function fetchAccounts(userId: number = 1) {
     try {

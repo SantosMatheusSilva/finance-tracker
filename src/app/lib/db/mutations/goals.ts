@@ -6,7 +6,7 @@ import {
     createGoalSchema } from "../schemas/goalsSchemas";
 
 // Mutation function to create a Goal 
-export async function createGoal(formdata: FormData): Promise <{ message: string; errors?: {}}> {
+export async function createGoal(formdata: FormData): Promise <{ message: string; errors?: object }> {
     // First validate the data from the form fields
     const validatedForm = createGoalSchema.safeParse({
         user_id: formdata.get('user_id'),
@@ -38,6 +38,7 @@ export async function createGoal(formdata: FormData): Promise <{ message: string
             message: 'Goal created successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {
             message: 'Failed to create Goal',
         }
@@ -45,7 +46,7 @@ export async function createGoal(formdata: FormData): Promise <{ message: string
 }
 
 // Mutation function to update a Goal
-export async function updateGoal(goal_id: number, formdata: FormData): Promise <{ message: string; errors?: {}}> {
+export async function updateGoal(goal_id: number, formdata: FormData): Promise <{ message: string; errors?: object }> {
     // First validate the data from the form fields
     const validatedForm = updateGoalSchema.safeParse({
         category: formdata.get('category'),
@@ -84,6 +85,7 @@ export async function updateGoal(goal_id: number, formdata: FormData): Promise <
             message: 'Goal updated successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {
             message: 'Failed to update Goal',
         }
@@ -91,7 +93,7 @@ export async function updateGoal(goal_id: number, formdata: FormData): Promise <
 }
 
 // Mutation function to Delete a Goal 
-export async function deleteGoal(goal_id: number): Promise <{ message: string; errors?: {}}> {
+export async function deleteGoal(goal_id: number): Promise <{ message: string; errors?: object }> {
     // Insertion block TRY
     try {
         await queryDb`
@@ -102,6 +104,7 @@ export async function deleteGoal(goal_id: number): Promise <{ message: string; e
             message: 'Goal deleted successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {
             message: 'Failed to delete Goal',
         }

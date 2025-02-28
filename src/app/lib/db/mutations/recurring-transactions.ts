@@ -4,10 +4,10 @@ import { queryDb } from "../neondb";
 import { 
     createRecurringTransactionSchema,
     updateRecurringTransactionSchema
- } from "../schemas/recurringtransactionsSchemas";
+ } from "../schemas/recurringTransactionsSchemas";
 
 // Mutation function to insert a new recurring transaction.
-export async function insertRecurringTransaction(formdata: FormData): Promise<{ message: string; errors?: {}}> {
+export async function insertRecurringTransaction(formdata: FormData): Promise<{ message: string; errors?: object}> {
     // First validate the data from the form fields 
     const validatedForm = createRecurringTransactionSchema.safeParse({
         user_id: formdata.get('user_id'),
@@ -85,12 +85,13 @@ export async function insertRecurringTransaction(formdata: FormData): Promise<{ 
     `;
         return { message: 'Recurring transaction created successfully.' };
     } catch (error) {
+        console.error('Database error', error);
         return { message: 'Error creating recurring transaction.' };
     }
 }
 
 // Mutation function to update a Goal
-export async function updateRecurringTransaction(recurring_transaction_id: number, formdata: FormData): Promise <{ message: string; errors?: {}}> {
+export async function updateRecurringTransaction(recurring_transaction_id: number, formdata: FormData): Promise <{ message: string; errors?: object }> {
     // First validate the data from the form fields
     const validatedForm = updateRecurringTransactionSchema.safeParse({
         account_id: formdata.get('account_id'),
@@ -151,6 +152,7 @@ export async function updateRecurringTransaction(recurring_transaction_id: numbe
     `;
         return { message: 'Recurring transaction updated successfully.' };
     } catch (error) {
+        console.error('Database error', error);
         return { message: 'Error updating recurring transaction.' };
     }
 }
@@ -167,6 +169,7 @@ export async function deleteRecurringTransaction(recurring_transaction_id: numbe
             message: 'Recurring Transaction deleted successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {
             message: 'Failed to delete Recurring Transaction',
         }

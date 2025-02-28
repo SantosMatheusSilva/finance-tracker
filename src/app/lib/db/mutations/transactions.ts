@@ -8,7 +8,7 @@ import {
 } from '../schemas/transactionsSchemas';
 
 // Mutation function to insert an Income Transaction 
-export async function insertIncomeTransaction(formdata: FormData): Promise<{ message: string; errors?: {}}> {
+export async function insertIncomeTransaction(formdata: FormData): Promise<{ message: string; errors?: object}> {
     // First validate the data from the form fields
     const validatedForm = createIncomeTransactionSchema.safeParse({
         user_id: formdata.get('user_id'),
@@ -64,6 +64,7 @@ export async function insertIncomeTransaction(formdata: FormData): Promise<{ mes
             message: 'Income Transaction created successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {
             message: 'Failed to create Income Transaction',
         }
@@ -74,7 +75,7 @@ export async function insertIncomeTransaction(formdata: FormData): Promise<{ mes
 
 const updateIncomeTransactionSchema = updateTransactionSchema.omit({expense_category: true})
 
-export async function updateIncomeTransaction(transaction_id: number, formdata: FormData): Promise<{ message: string; errors?: {}}> {
+export async function updateIncomeTransaction(transaction_id: number, formdata: FormData): Promise<{ message: string; errors?: object}> {
     // First validate the data from the form fields
     const validatedForm = updateIncomeTransactionSchema.safeParse({
         user_id: formdata.get('user_id'),
@@ -123,6 +124,7 @@ export async function updateIncomeTransaction(transaction_id: number, formdata: 
             message: 'Income Transaction updated successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {
             message: 'Failed to update Income Transaction',
         }
@@ -130,7 +132,7 @@ export async function updateIncomeTransaction(transaction_id: number, formdata: 
 }
 
 // Mutation function to insert an Expense Transaction
-export async function insertExpenseTransaction(formdata: FormData): Promise<{ message: string; errors?: {}}> {
+export async function insertExpenseTransaction(formdata: FormData): Promise<{ message: string; errors?: object}> {
     // First validate the data from the form fields
     const validatedForm = createExpenseTransactionSchema.safeParse({
         user_id: formdata.get('user_id'),
@@ -186,6 +188,7 @@ export async function insertExpenseTransaction(formdata: FormData): Promise<{ me
             message: 'Expense Transaction created successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {
             message: 'Failed to create Expense Transaction',
         }
@@ -195,7 +198,7 @@ export async function insertExpenseTransaction(formdata: FormData): Promise<{ me
 // Mutation function to update an Expense transaction
 const updateExpenseTransactionSchema = updateTransactionSchema.omit({income_category: true})
 
-export async function updateExpenseTransaction(transaction_id: number, formdata: FormData): Promise<{ message: string; errors?: {}}> {
+export async function updateExpenseTransaction(transaction_id: number, formdata: FormData): Promise<{ message: string; errors?: object}> {
     // First validate the data from the form fields
     const validatedForm = updateExpenseTransactionSchema.safeParse({
         user_id: formdata.get('user_id'),
@@ -244,6 +247,7 @@ export async function updateExpenseTransaction(transaction_id: number, formdata:
             message: 'Expense Transaction updated successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {    
             message: 'Failed to update Expense Transaction',
         }
@@ -262,6 +266,7 @@ export async function deleteTransaction(transaction_id: number): Promise<{ messa
             message: 'Transaction deleted successfully',
         }
     } catch (error) {
+        console.error('Database error', error);
         return {
             message: 'Failed to delete Transaction',
         }

@@ -1,5 +1,4 @@
 import SignupForm from "@/app/ui/auth/signup-form";
-import { main } from "framer-motion/client";
 
 export default function SignupPage() {
 

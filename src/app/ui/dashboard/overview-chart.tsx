@@ -3,7 +3,6 @@ import {
     Card, 
     CardHeader, 
     CardBody, 
-    CardFooter
 } from "@nextui-org/card";
 import { ApexOptions } from "apexcharts";
 //import Chart from "react-apexcharts";

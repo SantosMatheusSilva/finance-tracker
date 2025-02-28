@@ -8,7 +8,7 @@ import {
 
 
 // Mutation function to insert a new Account.
-export async function insertAccount(formdata: FormData): Promise<{ message: string; errors?: {}}> { // -> maybe add the user id in the parametters 
+export async function insertAccount(formdata: FormData): Promise<{ message: string; errors?: object}> { // -> maybe add the user id in the parametters 
     // First validate the data from the form fields 
     const validatedForm = createAccountSchema.safeParse({
         user_id: formdata.get('user_id'),
@@ -49,7 +49,7 @@ export async function insertAccount(formdata: FormData): Promise<{ message: stri
 }
 
 // Mutation function to update an existing Account.
-export async function updateAccount(account_id: number, formdata: FormData): Promise<{ message: string; errors?: {}}> {
+export async function updateAccount(account_id: number, formdata: FormData): Promise<{ message: string; errors?: object}> {
     // First validate the data from the form fields
     const validatedForm = updateAccountSchema.safeParse({
         account_name: formdata.get('account_name'),
@@ -105,8 +105,9 @@ export async function deleteAccount(account_id: number): Promise<{ message: stri
             message: 'Account deleted successfully',
         }
     } catch (error) {
+        console.error('An error ocurred while deleting an account:', error);
         return {
-            message: 'Failed to delete Account',
-        }
-    }
+            message: 'Failed to delete Account'
+}
+}
 }

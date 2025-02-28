@@ -5,7 +5,7 @@ import {
     CardBody, 
     CardFooter
 } from "@nextui-org/card";
-import {Spinner} from "@nextui-org/spinner";
+
 import  Loading  from "@/app/ui/loadingSpinner";
 import {
     calculateUserTotalIncome, 
@@ -21,7 +21,6 @@ import {
 import {
     useState,
     useEffect,
-    Suspense
 } from "react";
 
 //The date to be rendered in the Cards
