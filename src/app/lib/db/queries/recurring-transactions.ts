@@ -1,5 +1,5 @@
 import { queryDb } from "../neondb";
-import { RecurringTransactions } from "../schemas/recurringTransactionsSchemas";
+import { RecurringTransactions } from "../schemas/temp";
 import { formatDateToLocal } from "../../utils/utils";
 
 // Function to query user's recurring transactions
