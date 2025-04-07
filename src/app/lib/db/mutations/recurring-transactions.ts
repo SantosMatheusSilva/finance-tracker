@@ -1,7 +1,10 @@
 'use server';
 
 import { queryDb } from "../neondb";
-import { createRecurringTransactionSchema, updateRecurringTransactionSchema } from "@/app/lib/db/schemas/recurringTransactionsSchemas";
+import { 
+    createRecurringTransactionSchema, 
+    updateRecurringTransactionSchema 
+} from "@/app/lib/db/schemas/recurringTransactionsSchemas";
 
 // Mutation function to insert a new recurring transaction.
 export async function insertRecurringTransaction(formdata: FormData): Promise<{ message: string; errors?: object}> {
