@@ -1,9 +1,9 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
-import { LoginForm, loginFormSchema } from '@/app/lib/db/schemas/userSchemas';
+import { LoginForm, loginFormSchema } from './src/app/lib/db/schemas/userSchemas';
 import bcrypt from 'bcrypt';
-import { queryDb } from '@/app/lib/db/neondb';
+import { queryDb } from './src/app/lib/db/neondb';
 
 
 
