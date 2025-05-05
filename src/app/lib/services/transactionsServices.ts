@@ -12,9 +12,13 @@ import {
     formatDateToLocal, 
 } from "../utils/utils";
 
+/* import getServerSession from 'next-auth';
+
+const session = await getServerSession( { req });
+const userId = session?.user?.user_id; */
 
 // function to get the latest transactios (expenses and inocmes) => LATEST TRANSACTIONS TABLE 
-export const fetchLatestTransactions = async (userId: number = 1, limit: number = 15) => {
+export const fetchLatestTransactions = async (userId: number, limit: number = 15) => {
 
     try {
     const transactions = await getTransactions(userId);
@@ -62,7 +66,7 @@ export const deleteTransactionById = async (transactionId: number) => {
 
 
 //FUNCTION TO CALCULATE USER TOTAL INCOME (FOR THE CURRENT MONTH)
-export const calculateUserTotalIncome = async (userId: number = 1) => {
+export const calculateUserTotalIncome = async (userId: number) => {
 
     try{
         const incomeTransactions = await getIncomeTransactions(userId);
@@ -86,7 +90,7 @@ export const calculateUserTotalIncome = async (userId: number = 1) => {
     }
 }
 //FUNCTION TO CALCULATE USER TOTAL EXPENSE (FOR THE CURRENT MONTH)
-export const calculateUserTotalExpense = async (userId: number = 1) => {
+export const calculateUserTotalExpense = async (userId: number) => {
 
     try{
         const expenseTransactions = await getExpenseTransactions(userId);
@@ -109,7 +113,7 @@ export const calculateUserTotalExpense = async (userId: number = 1) => {
 }
 
 //FUNCTION TO CALCULATE THE USER BALANCE
-export const calculateUserBalance = async (userId: number = 1) => {
+export const calculateUserBalance = async (userId: number) => {
 
    try{
     const transactions = await getTransactions(userId)

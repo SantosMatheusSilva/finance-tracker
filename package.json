@@ -9,12 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "20": "^3.1.9",
     "@heroicons/react": "^2.2.0",
-    "@heroui/breadcrumbs": "^2.2.6",
-    "@heroui/system": "^2.4.6",
-    "@heroui/theme": "^2.4.5",
+    "@heroui/breadcrumbs": "2.2.13",
+    "@heroui/system": "2.4.13",
+    "@heroui/theme": "2.4.13",
     "@neondatabase/serverless": "^0.10.3",
-    "@nextui-org/react": "^2.6.8",
+    "@heroui/react": "2.7.6",
     "@vercel/postgres": "^0.10.0",
     "apexcharts": "^4.3.0",
     "bcrypt": "^5.1.1",

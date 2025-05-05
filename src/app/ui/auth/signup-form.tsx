@@ -1,25 +1,42 @@
 'use client'
 import React from "react"
-//import { useActionState } from "react";
-import {Form, Input, Button} from "@nextui-org/react";
+import { useActionState, useEffect } from "react";
+import {Form, Input, Button} from "@heroui/react";
+import { createUser } from "@/app/lib/services/userServices";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
-    //const [errorMessage, isPending] = useActionState(() => Promise.resolve(), undefined);
+    const [ prevState, formAction, isPending ] = useActionState(createUser, {
+        message: '',
+        error: {
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+        },
+    });
+    
+    const router = useRouter();
+    // Redirect to login page after successful signup
+    useEffect(() => {
+        if (prevState?.message === 'User created successfully') {
+            router.push('/auth/login');
+        }
+    }, [prevState, router]);
 
 
     return (
-            
-        <Form /* action={formAction} */ validationBehavior="native" className="justify-center items-center w-64  md:w-96 h-auto py-5 space-y-4 border-2 border-black my-5 mx-8 rounded-2xl dark:shadow-lg dark:border-white">
+        <Form action={formAction} /* method="post" */ validationBehavior="native" className="justify-center items-center w-64  md:w-96 h-auto py-5 space-y-4 border-2 border-black my-5 mx-8 rounded-2xl dark:shadow-lg dark:border-white">
             <div className="flex flex-col gap-4 max-w-md">
                 <Input
                 required
                 label="User Name"
                 labelPlacement="outside"
-                placeholder="Enter your Name"
-                name="name"
-                id="name"
+                placeholder="Enter your User Name"
+                name="username"
+                id="username"
                 type="text"
-                errorMessage="please enter a valid name"
+                errorMessage= {prevState?.error?.username}
 
                 />
             </div>
@@ -32,7 +49,7 @@ export default function SignupForm() {
                 name="email"
                 id="email"
                 type="email"
-                errorMessage="please enter a valid email"
+                errorMessage={prevState?.message?.email}
                 
                 />
             </div>
@@ -66,18 +83,16 @@ export default function SignupForm() {
                 color="default"
                 variant="bordered"
                 className="w-full dark:border-white"
+                isLoading={isPending}
+                disabled={isPending}
                 >
                     Signup
                 </Button>
             </div>
             <div>
                 {/* error message */}
-               {/*  {errorMessage && (
-                    <>
-                    <p>{errorMessage}</p>
-                    </>
-                )} */}
+                {prevState?.error && <p>{prevState.error}</p>} 
             </div>
         </Form>
-    )
+        )
 }

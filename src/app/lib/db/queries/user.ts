@@ -7,6 +7,7 @@ export async function getUserData(userId: number): Promise<User> {
         const data: User[]= (await queryDb`
         SELECT * FROM users WHERE user_id = ${userId} `) as User[];
         const user = data[0];
+        console.log('User data:', user);
         return user;
   
     } catch (error) {

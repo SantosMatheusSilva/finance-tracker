@@ -1,25 +1,72 @@
 'use server';
  
-import { signIn } from 'auth';
+import { signIn, auth } from 'auth';
 import { AuthError } from 'next-auth';
- 
-// ...
+import { insertUser } from '../db/mutations/user';
+import { queryDb } from '../db/neondb';
+import { redirect } from 'next/navigation';
+import { User } from '../db/schemas/userSchemas';
+
+type AuthFormState =  {
+  success: true; redirectTo: string;
+} | {
+  success: false; error: string;
+};
+
  
 export async function authenticate(
-  prevState: string | undefined,
+  prevState: AuthFormState | undefined,
   formData: FormData,
-) {
+): Promise<AuthFormState> {
   try {
-    await signIn('credentials', formData);
-  } catch (error) {
+    const res = await signIn('credentials', {
+      redirect: false,
+      email: formData.get('email'),
+      password: formData.get('password'),
+    });
+    
+    if (res?.error) {
+      console.error('Sign in error:', res.error);
+      return { success: false, error: 'Invalid credentials' };
+    }
+ 
+    const email = formData.get('email')?.toString() ?? '';
+    const result = await queryDb`SELECT * FROM users WHERE email=${email}`;
+    const user = result[0] as User | undefined;
+    if (!user || !user.user_id) {
+      console.error('User not found:', res?.user?.email);
+      return { success: false, error: 'User not found' };
+    }
+
+    return {
+      success: true,
+      redirectTo: `/dashboard/${user.user_id}/overview`,
+    }
+
+  } catch (error: any) {
+    console.error('Error during sign in:', error);
+    if (error?.digest?.startsWith('NEXT_REDIRECT')) throw error;
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'Invalid credentials.';
+          return { success: false, error: 'Invalid credentials' };
         default:
-          return 'Something went wrong.';
+          return { success: false, error: 'An unknown error occurred.' };
       }
     }
-    throw error;
+    return { success: false, error : 'An unknown error occurred.' };
+  }
+}
+
+export async function createUser (prevState:{ message: string; errors?: object | undefined} | {error: string}, formData: FormData) {
+  try{
+    const user = await insertUser(formData);
+    if(user && user.message === 'User created successfully') {
+      return user 
+    }
+    console.log('User created:', user);
+  } catch (error) {
+    console.error('Error creating user:', error);
+    return { error: 'Failed to create user'};
   }
 }

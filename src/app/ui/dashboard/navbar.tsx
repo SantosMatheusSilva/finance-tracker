@@ -1,3 +1,4 @@
+'use client'
 import {  
     Navbar,   
     NavbarBrand,   
@@ -5,18 +6,23 @@ import {
     NavbarMenuToggle,
     NavbarMenu,
     NavbarMenuItem  
-} from "@nextui-org/navbar";
+} from "@heroui/navbar";
 import {
     Avatar, 
-} from "@nextui-org/avatar";
+} from "@heroui/avatar";
 import {  
     Dropdown,  
     DropdownTrigger,  
     DropdownMenu,  
     DropdownSection,  
     DropdownItem
-} from "@nextui-org/dropdown";
+} from "@heroui/dropdown";
+import { LogoutButton } from "./buttons";
+import { signOut } from "next-auth/react";
+
 import { useState } from "react";
+import { useUser } from "@/app/context/sessionDataProvider";
+
 
 
 interface NavbarProps {
@@ -39,6 +45,7 @@ export const AcmeLogo = () => {
 
 export default function TopNavbar ({ sideNavRef }: NavbarProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const {sessionUser} = useUser();
 
     /* const handleToggle = () => {
         setIsMenuOpen((prev) => !prev); 
@@ -62,7 +69,7 @@ export default function TopNavbar ({ sideNavRef }: NavbarProps) {
           <p className="font-bold text-inherit sm:hidden">FTracker</p>
         </NavbarBrand>
         <NavbarContent justify="start" className="hidden sm:flex">
-          <p>Hello UserName.</p>
+          <p className="text-2xl">Hello <strong>{sessionUser.username}</strong>.</p>
         </NavbarContent>
 
         <NavbarContent className="hidden sm:flex" justify="end">
@@ -82,8 +89,8 @@ export default function TopNavbar ({ sideNavRef }: NavbarProps) {
             <DropdownMenu aria-label="Profile Actions">
               <DropdownSection>
                 <DropdownItem key="profile">
-                  <p>signed in as</p>
-                  <p>UserEmail</p>
+                  <p>signed in as <strong>{sessionUser.username}</strong></p>
+                  <p>{sessionUser.email}</p>
                 </DropdownItem>
               </DropdownSection>
               <DropdownItem key="update profile">
@@ -91,7 +98,7 @@ export default function TopNavbar ({ sideNavRef }: NavbarProps) {
               </DropdownItem>
 
               <DropdownItem key="log out">
-                <p>Log Out button</p>
+                <LogoutButton onPress={() => signOut()}>Log Out</LogoutButton>
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
@@ -103,14 +110,14 @@ export default function TopNavbar ({ sideNavRef }: NavbarProps) {
         </NavbarContent>
         <NavbarMenu className="flex gap-3 md:hidden" >
           <NavbarMenuItem>
-            <p>signed in as</p>
-            <p>UserEmail</p>
+            <p>signed in as {sessionUser.username}</p>
+            <p>{sessionUser.email}</p>
           </NavbarMenuItem>
           <NavbarMenuItem>
             <p>Update profile</p>
           </NavbarMenuItem>
           <NavbarMenuItem>
-            <p>Log Out button</p>
+            <LogoutButton onPress={() => signOut()}>Log Out</LogoutButton>
           </NavbarMenuItem>
         </NavbarMenu>
       </Navbar>

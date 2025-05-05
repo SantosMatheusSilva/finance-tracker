@@ -1,3 +1,4 @@
+'use client'
 import {  
     Modal,  
     ModalContent,  
@@ -6,7 +7,7 @@ import {
     ModalFooter,
     ModalProps,
     useDisclosure
-} from "@nextui-org/modal";
+} from "@heroui/modal";
 import { 
     CancelButton,
     ConfirmButton,

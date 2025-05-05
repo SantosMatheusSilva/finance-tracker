@@ -4,10 +4,20 @@ import { z } from 'zod';
 
 // Schema to create a user
 export const createUserSchema = z.object({
-    username: z.string(),
-    email: z.string().email(),
-    password: z.string().min(6),
-    confirmPassword: z.string().min(6),
+    username: z.string().min(3, {message: 'Username must be at least 3 characters long' }).max(20, { message: 'Username must be at most 20 characters long' }),
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(6, 'Password must be at least 6 characters long'),
+    confirmPassword: z.string().min(6, 'Please confirm your password').superRefine((val, ctx) => {
+        if (ctx.data.password !== val) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Passwords do not match',
+                path: ['confirmPassword'],
+            });
+        }
+        
+    },),
+
 });
 
 // CreateUser type infered from zod createUserSchema
@@ -30,11 +40,13 @@ export const userSchema = z.object({
     user_id: z.number(),
     username: z.string(),
     email: z.string().email(),
+    password_hash: z.string(),
     created_at: z.string().date(),
 });
 
 // User type infered from zod userSchema
 export type User = z.infer<typeof userSchema>;
+export type SessionUser = Omit<User, 'password_hash'>;
 
 // LOGIN FORM 
 

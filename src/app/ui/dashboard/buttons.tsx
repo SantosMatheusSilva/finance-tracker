@@ -3,12 +3,13 @@ import {
     ButtonGroup,
     ButtonProps,
     ButtonGroupProps
-} from "@nextui-org/button";
+} from "@heroui/button";
 import{
     PencilIcon,
     TrashIcon,
     PlusIcon,
-    ArrowRightCircleIcon
+    ArrowRightCircleIcon,
+    PowerIcon
 } from '@heroicons/react/24/solid';
 
 
@@ -195,6 +196,23 @@ export function ConfirmButton({
 } : BaseButtonProps) : JSX.Element {
     return(
         <Button aria-label={ariaLabel} size={size} color={color} radius={radius} onPress={onPress} {...rest}>
+            {children}
+        </Button>
+    )
+}
+
+export function LogoutButton({
+    ariaLabel = 'Log Out',
+    size = 'sm',
+    color = 'danger',
+    radius = 'sm',
+    startContent = <PowerIcon className="size-5"/>,
+    children = <p>Log Out</p>,
+    onPress,
+    ...rest
+} : BaseButtonProps) : JSX.Element {
+    return(
+        <Button aria-label={ariaLabel} startContent={startContent} size={size} color={color} radius={radius} onPress={onPress} {...rest}>
             {children}
         </Button>
     )

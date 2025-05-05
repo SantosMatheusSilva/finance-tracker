@@ -1,9 +1,10 @@
+'use client'
 import {Card, 
     CardHeader,     
     CardBody,   
     CardFooter
-} from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
+} from "@heroui/card";
+import { Button } from "@heroui/button";
 
 export default function UserCard() {
 

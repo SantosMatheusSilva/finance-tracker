@@ -3,7 +3,7 @@ import {
     Card, 
     CardHeader, 
     CardBody, 
-} from "@nextui-org/card";
+} from "@heroui/card";
 import { ApexOptions } from "apexcharts";
 //import Chart from "react-apexcharts";
 import dynamic from "next/dynamic";

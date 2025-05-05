@@ -1,10 +1,11 @@
+'use client'
 import {
     Card, 
     CardHeader, 
     CardBody, 
-} from "@nextui-org/card";
-import {ScrollShadow} from "@nextui-org/scroll-shadow";
-import {Progress} from "@nextui-org/progress";
+} from "@heroui/card";
+import {ScrollShadow} from "@heroui/scroll-shadow";
+import {Progress} from "@heroui/progress";
 export default function PlannerCard() {
 
     return(

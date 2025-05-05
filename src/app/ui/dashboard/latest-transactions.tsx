@@ -6,17 +6,17 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-} from "@nextui-org/table";
-import { Button } from "@nextui-org/button";
-import { useDisclosure } from "@nextui-org/react";
+} from "@heroui/table";
+import { Button } from "@heroui/button";
+import { useDisclosure } from "@heroui/react";
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useState, useEffect } from "react";
-//import { SharedSelection } from "@nextui-org/react";
+//import { SharedSelection } from "@heroui/react";
 import {
   fetchLatestTransactions,
   deleteTransactionById,
@@ -26,6 +26,7 @@ import { formatCurrency } from "@/app/lib/utils/utils";
 import { ActionButtons, AddTransactionButton } from "./buttons";
 import { ConfirmationModal } from "./confirmation-modal";
 import Loading from "../loadingSpinner";
+import { useUser } from "@/app/context/sessionDataProvider";
 
 
 export default function LatestTransactionsTable() {
@@ -36,11 +37,13 @@ export default function LatestTransactionsTable() {
     null
   );
 
+  const user = useUser();
+
   useEffect(() => {
     const getLatestTransactions = async () => {
       setIsLoading(true);
       try {
-        const result = await fetchLatestTransactions();
+        const result = await fetchLatestTransactions(user.sessionUser.user_id);
         setTransactions(result);
         setIsLoading(false);
       } catch (error) {
@@ -250,7 +253,7 @@ export default function LatestTransactionsTable() {
                     }
                   >
                     {columnKey === "Actions" ? (
-                      row.Actions // Ensure this is ReactNode
+                      (row.Actions) // Ensure this is ReactNode
                     ) : (
                       
                       <>{columnKey === "Category" ? String(row.Category) : getKeyValue(row, columnKey as keyof RowData)}</>

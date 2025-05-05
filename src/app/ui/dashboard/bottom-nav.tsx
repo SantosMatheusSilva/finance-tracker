@@ -1,7 +1,7 @@
 import {
     Card, 
     CardBody, 
-} from "@nextui-org/card";
+} from "@heroui/card";
 import {
     HomeIcon,
     PlusCircleIcon,

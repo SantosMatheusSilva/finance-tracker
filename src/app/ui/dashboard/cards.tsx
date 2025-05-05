@@ -4,7 +4,7 @@ import {
     CardHeader, 
     CardBody, 
     CardFooter
-} from "@nextui-org/card";
+} from "@heroui/card";
 
 import  Loading  from "@/app/ui/loadingSpinner";
 import {
@@ -22,6 +22,9 @@ import {
     useState,
     useEffect,
 } from "react";
+import { useUser } from "@/app/context/sessionDataProvider";
+
+
 
 //The date to be rendered in the Cards
 const cardDate = getDayAndMonth(new Date);
@@ -31,7 +34,7 @@ function BalanceCard ({balance, isLoading} : {balance: string, isLoading: boolea
 
     return (
       <Card
-        className="w-full max-w-full max-h-52 border-1 border-white" /* md:w-72 h-36 */
+        className="w-full max-w-full max-h-52" /* md:w-72 h-36 */
         radius="lg"
         isHoverable
         isPressable
@@ -176,16 +179,18 @@ export default function CardWrapper() {
     const [userAccounts, setUserAccounts] = useState<Account[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    const user = useUser();
+
     //Executes all the services for the Card data fetch
     useEffect( () => {
         const getTotals = async () => {
             setIsLoading(true);
             try{
                 const [totalIncome, totalExpense, userBalance, userAccounts ] = await Promise.all([
-                    calculateUserTotalIncome(),
-                    calculateUserTotalExpense(),
-                    calculateUserBalance(),
-                    fetchAccounts()
+                    calculateUserTotalIncome(user.sessionUser.user_id),
+                    calculateUserTotalExpense(user.sessionUser.user_id),
+                    calculateUserBalance(user.sessionUser.user_id),
+                    fetchAccounts(user.sessionUser.user_id)
                 ]);
 
                 setUserTotalIncome(totalIncome);

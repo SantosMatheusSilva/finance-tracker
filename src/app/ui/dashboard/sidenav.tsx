@@ -1,13 +1,17 @@
 "use client";
-import { Button } from "@nextui-org/button";
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
-import { Divider } from "@nextui-org/divider";
+import { Button } from "@heroui/button";
+import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
+import { Divider } from "@heroui/divider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import UserCard from "./user-card";
+import { LogoutButton } from "./buttons";
+import { signOut } from "next-auth/react";
+import { useParams } from "next/navigation";
 
 export default function SideNav() {
   const pathname = usePathname();
+  const { userId } = useParams();
 
   const isActive = (href: string) => pathname === href;
 
@@ -25,11 +29,11 @@ export default function SideNav() {
       <CardBody className="flex flex-col justify-between my-10">
         <Button
           as={Link}
-          href="/dashboard"
+          href={`/dashboard/${userId}/overview`}
           variant="ghost"
           radius="md"
           className={`${
-            isActive("/dashboard") ? "ring-2 ring-blue-500 border-none" : ""
+            isActive(`/dashboard/${userId}/overview`) ? "ring-2 ring-blue-500 border-none" : ""
           } `}
         >
           <p className="text-lg">Dashboard</p>
@@ -38,9 +42,9 @@ export default function SideNav() {
           as={Link}
           variant="ghost"
           radius="md"
-          href="/dashboard/transactions"
+          href={`/dashboard/${userId}/transactions`}
           className={`${
-            isActive("/dashboard/transactions")
+            isActive(`/dashboard/${userId}/transactions`)
               ? "ring-2 ring-blue-500 border-none"
               : ""
           } `}
@@ -51,9 +55,9 @@ export default function SideNav() {
           as={Link}
           variant="ghost"
           radius="md"
-          href="/dashboard/planner/"
+          href={`/dashboard/${userId}/planner`}
           className={`${
-            isActive("/dashboard/planner")
+            isActive(`/dashboard/${userId}/planner`)
               ? "ring-2 ring-blue-500 border-none"
               : ""
           } `}
@@ -65,9 +69,9 @@ export default function SideNav() {
           as={Link}
           variant="ghost"
           radius="md"
-          href="/dashboard/accounts"
+          href={`/dashboard/${userId}/accounts`}
           className={`${
-            isActive("/dashboard/accounts")
+            isActive(`/dashboard/${userId}/accounts`)
               ? "ring-2 ring-blue-500 border-none"
               : ""
           } `}
@@ -79,9 +83,9 @@ export default function SideNav() {
           as={Link}
           variant="ghost"
           radius="md"
-          href="/dashboard/reports"
+          href={`/dashboard/${userId}/reports`}
           className={`${
-            isActive("/dashboard/reports")
+            isActive(`/dashboard/${userId}/reports`)
               ? "ring-2 ring-blue-500 border-none"
               : ""
           } `}
@@ -92,9 +96,14 @@ export default function SideNav() {
       </CardBody>
       <Divider className="my-5" />
       <CardFooter className="align-middle justify-center">
-        <Button className="w-full" color="default" variant="ghost">
-          <strong>Logout</strong>
-        </Button>
+       <LogoutButton
+          ariaLabel="Logout"
+          size='md'
+          color='danger'
+          radius="sm"
+          onPress={() => signOut({ callbackUrl: "/" })}
+          className="w-full"
+        />
       </CardFooter>
     </Card>
   );
