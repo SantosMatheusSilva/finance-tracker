@@ -1,12 +1,14 @@
 'use client'
 import React from "react"
-import { useActionState, useEffect } from "react";
+import { useEffect } from "react";
 import {Form, Input, Button} from "@heroui/react";
 import { createUser } from "@/app/lib/services/userServices";
 import { useRouter } from "next/navigation";
+import { useFormState } from "react-dom";
 
 export default function SignupForm() {
-    const [ prevState, formAction, isPending ] = useActionState(createUser, {
+
+    const initilalState = {
         message: '',
         error: {
             username: '',
@@ -14,15 +16,18 @@ export default function SignupForm() {
             password: '',
             confirmPassword: '',
         },
-    });
+        errors: {},
+    }    
+
+    const [ formState, formAction, isPending ] = useFormState(createUser, initilalState);
     
     const router = useRouter();
     // Redirect to login page after successful signup
     useEffect(() => {
-        if (prevState?.message === 'User created successfully') {
+        if (formState?.message === 'User created successfully') {
             router.push('/auth/login');
         }
-    }, [prevState, router]);
+    }, [formState, router]);
 
 
     return (
@@ -36,7 +41,7 @@ export default function SignupForm() {
                 name="username"
                 id="username"
                 type="text"
-                errorMessage= {prevState?.error?.username}
+                errorMessage= {formState?.errors?.username}
 
                 />
             </div>
@@ -49,7 +54,7 @@ export default function SignupForm() {
                 name="email"
                 id="email"
                 type="email"
-                errorMessage={prevState?.message?.email}
+                errorMessage={formState?.errors?.email}
                 
                 />
             </div>
@@ -91,7 +96,7 @@ export default function SignupForm() {
             </div>
             <div>
                 {/* error message */}
-                {prevState?.error && <p>{prevState.error}</p>} 
+                {formState?.error && <p>{JSON.stringify(formState.error)}</p>} 
             </div>
         </Form>
         )

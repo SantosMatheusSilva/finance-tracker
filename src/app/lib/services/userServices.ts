@@ -57,15 +57,41 @@ export async function authenticate(
   }
 }
 
-export async function createUser (prevState:{ message: string; errors?: object | undefined} | {error: string}, formData: FormData) {
+
+  type FormState =  {
+    message: string;
+    error?: {
+        username: string;
+        email: string;
+        password: string;
+        confirmPassword: string;
+    };
+    errors?:  Record<string, string>;
+}
+export async function createUser (prevState: FormState, formData: FormData): Promise<FormState> {
   try{
     const user = await insertUser(formData);
     if(user && user.message === 'User created successfully') {
-      return user 
+      return {
+      message: user.message,
+      };
     }
-    console.log('User created:', user);
+
+    return {
+      message: ' ',
+      errors: {},
+    };
   } catch (error) {
     console.error('Error creating user:', error);
-    return { error: 'Failed to create user'};
+    return { 
+      message: '',
+      errors: {},
+      error: {
+        username: 'Failed to create user.',
+        email: 'Failed to create user.',
+        password: 'Failed to create user.',
+        confirmPassword: 'Failed to create user.',
+      },
+    };
   }
 }
