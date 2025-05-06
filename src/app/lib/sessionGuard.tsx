@@ -16,7 +16,7 @@ export function SessionGuard({ children }: { children: ReactNode }) {
   if (!isOwner) {
     return (
       <div className="text-red-500 font-semibold p-4">
-        Access denied: You're not allowed here.
+        Access denied: You&apos;re not allowed here.
       </div>
     );
   }
