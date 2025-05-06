@@ -6,29 +6,28 @@ import {
     ModalBody,
     ModalFooter,
     Button,
-    useDisclosure,
     RadioGroup, 
     Radio,
     Input,
     Divider,
     Select, 
-    SelectItem
+    SelectItem,
+    ModalProps
   } from "@heroui/react";
-import { useEffect } from "react";
+//import { useEffect } from "react";
 
+interface BaseModalProps extends ModalProps {
+    isOpen: boolean;
+    onOpen: () => void;
+    onCloseAction: () => void;
+} 
 
-
-export default function AddTransactionModal() {
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
-
-    useEffect(() => {
-        const handler = () => onOpen();
-        window.addEventListener("openModal", handler);
-    
-        return () => window.removeEventListener("openModal", handler);
-      }, [onOpen]);
-    
-
+export default function AddTransactionModal({
+    onOpenChange, 
+    isOpen, 
+    onCloseAction,
+} : BaseModalProps )  {
+  
     return (
         <Modal
         isOpen={isOpen}
@@ -107,7 +106,7 @@ export default function AddTransactionModal() {
                     <Divider className="my-2"></Divider>
                     <ModalFooter>
                         <Button color="danger" onPress={onClose}>Cancel</Button>
-                        <Button color="primary" onPress={onClose}>Add</Button>
+                        <Button color="primary" onPress={onCloseAction}>Add</Button>
                     </ModalFooter>
                     </>
                 )}

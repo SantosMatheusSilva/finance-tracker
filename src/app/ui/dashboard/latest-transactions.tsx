@@ -22,6 +22,7 @@ import {
   deleteTransactionById,
 } from "@/app/lib/services/transactionsServices";
 import { Transaction } from "@/app/lib/db/schemas/transactionsSchemas";
+import  AddTransactionModal  from "./add-transaction-modal";
 import { formatCurrency } from "@/app/lib/utils/utils";
 import { ActionButtons, AddTransactionButton } from "./buttons";
 import { ConfirmationModal } from "./confirmation-modal";
@@ -36,7 +37,7 @@ export default function LatestTransactionsTable() {
   const [selectedTransaction, setSelectedTransaction] = useState<number | null>(
     null
   );
-
+  const {isOpen: isAddModalOpen, onOpen: onAddModalOpen, onClose: onAddModalClose} = useDisclosure();
   const user = useUser();
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function LatestTransactionsTable() {
       }
     };
     getLatestTransactions();
-  }, []);
+  }, [user.sessionUser.user_id]);
   //console.log("transactions --->", transactions);
 
   const columns = [
@@ -157,6 +158,17 @@ export default function LatestTransactionsTable() {
       >
         <div></div>
       </ConfirmationModal>
+      {/* Add Transaction Modal */}
+      <AddTransactionModal
+        isOpen={isAddModalOpen}
+        onOpen={onAddModalOpen}
+        onCloseAction={onAddModalClose}
+        onClose={onAddModalClose}
+        placement="top-center"
+        //trigger={<AddTransactionButton />}
+      >
+        <div></div>
+      </AddTransactionModal>
       <Table
         className="w-full "
         aria-label="Latest transactions table"
@@ -208,7 +220,7 @@ export default function LatestTransactionsTable() {
                     </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
-                <AddTransactionButton variant="ghost" size="md" radius="md">
+                <AddTransactionButton variant="ghost" size="md" radius="md" onPress={onAddModalOpen}>
                   Add
                 </AddTransactionButton>
               </div>

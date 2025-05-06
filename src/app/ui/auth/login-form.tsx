@@ -7,7 +7,7 @@ import { authenticate } from "@/app/lib/services/userServices";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/app/ui/loadingSpinner";
-import { useUser } from "@/app/lib/hooks/useUser";
+
 
 
 type AuthFormState =  {
@@ -16,7 +16,7 @@ type AuthFormState =  {
     success: false; error: string;
   };
 
-const initialState: AuthFormState = { success: false, error: ''};
+//const initialState: AuthFormState = { success: false, error: ''};
 
 export default function LoginForm(){
     const [state, formAction, isPending] = useActionState <AuthFormState, FormData> (authenticate, {success: false, error: ''});

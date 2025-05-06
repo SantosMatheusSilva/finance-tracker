@@ -1,7 +1,6 @@
 "use client";
 import { Breadcrumbs, BreadcrumbItem } from "@heroui/breadcrumbs";
 import { usePathname, useParams } from "next/navigation";
-import Link from "next/link";
 
 export default function TransactionsLayout({
   children,

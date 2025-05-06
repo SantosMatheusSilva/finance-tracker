@@ -1,10 +1,9 @@
 'use server';
  
-import { signIn, auth } from 'auth';
+import { signIn } from 'auth';
 import { AuthError } from 'next-auth';
 import { insertUser } from '../db/mutations/user';
 import { queryDb } from '../db/neondb';
-import { redirect } from 'next/navigation';
 import { User } from '../db/schemas/userSchemas';
 
 type AuthFormState =  {
@@ -40,12 +39,12 @@ export async function authenticate(
 
     return {
       success: true,
-      redirectTo: `/dashboard/${user.user_id}/overview`,
+      redirectTo: `/dashboard/${user.user_id}/`,
     }
 
-  } catch (error: any) {
+  } catch (error: Error | unknown) {
     console.error('Error during sign in:', error);
-    if (error?.digest?.startsWith('NEXT_REDIRECT')) throw error;
+    if ((error as AuthError).type?.startsWith('NEXT_REDIRECT')) throw error;
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':

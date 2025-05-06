@@ -5,7 +5,7 @@ import LatestTransactions from '@/app/ui/dashboard/latest-transactions';
 import PlannerCard from '@/app/ui/dashboard/planner-card';
 import { useUser } from '@/app/context/sessionDataProvider';
 
-export default function overviewPage({ params }: { params: { id: string } }) {
+export default function OverviewPage() {
    const {sessionUser, routeUserId} = useUser();
 
    console.log('User:', sessionUser);
