@@ -203,7 +203,7 @@ export default function CardWrapper() {
             }
         };
         getTotals();
-    }, []); 
+    }, [user.sessionUser.user_id]); 
 
     
     return(

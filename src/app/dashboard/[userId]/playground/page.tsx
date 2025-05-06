@@ -11,7 +11,9 @@ export default function ComponentsTestingPage () {
       
     return (
         <>
-        <AddTransactionModal />
+        <AddTransactionModal onOpen={() => {}} onOpenChange={() => {}} isOpen={true} onCloseAction={() => {}}>
+            <></>
+        </AddTransactionModal>
         </>
     )
 }

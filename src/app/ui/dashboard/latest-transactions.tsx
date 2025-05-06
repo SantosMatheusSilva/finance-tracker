@@ -152,9 +152,9 @@ export default function LatestTransactionsTable() {
     >
       {/* Confirmation modal bellow */}
       <ConfirmationModal
-        onClose={onClose}
+        onCloseAction={onClose}
         isOpen={isOpen}
-        onConfirm={confirmDelete}
+        onConfirmAction={confirmDelete}
       >
         <div></div>
       </ConfirmationModal>
