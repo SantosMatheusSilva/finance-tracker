@@ -9,7 +9,6 @@ export const createBudgetSchema = z.object({
     expense_category: z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"], {
         invalid_type_error: 'Please select an Expense Category.'
     }),
-    income_category: z.never(),
     budget_amount: z.number({
         invalid_type_error: 'Please enter a number grater than 0.',
     }).positive().gt(0),

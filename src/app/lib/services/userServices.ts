@@ -1,22 +1,17 @@
 'use server';
  
-import { signIn } from 'auth';
-import { AuthError } from 'next-auth';
+import { signIn } from '@/auth';
 import { insertUser } from '../db/mutations/user';
 import { queryDb } from '../db/neondb';
-import { User } from '../db/schemas/userSchemas';
+import { User} from '../db/schemas/userSchemas';
+import { redirect } from 'next/navigation';
 
-type AuthFormState =  {
-  success: true; redirectTo: string;
-} | {
-  success: false; error: string;
-};
 
- 
+ // to be removed !!
 export async function authenticate(
-  prevState: AuthFormState | undefined,
+
   formData: FormData,
-): Promise<AuthFormState> {
+){
   try {
     const res = await signIn('credentials', {
       redirect: false,
@@ -36,22 +31,14 @@ export async function authenticate(
       console.error('User not found:', res?.user?.email);
       return { success: false, error: 'User not found' };
     }
-
-    return {
-      success: true,
-      redirectTo: `/dashboard/${user.user_id}/`,
-    }
+    
+    redirect (`/dashboard`);
 
   } catch (error: Error | unknown) {
     console.error('Error during sign in:', error);
-    if ((error as AuthError).type?.startsWith('NEXT_REDIRECT')) throw error;
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return { success: false, error: 'Invalid credentials' };
-        default:
-          return { success: false, error: 'An unknown error occurred.' };
-      }
+    if ((error as AuthErrorLike).type?.startsWith('NEXT_REDIRECT')) throw error;
+    if ((error as AuthErrorLike).type === 'CredentialsSignin') {
+      return { success: false, error: 'Invalid credentials' };
     }
     return { success: false, error : 'An unknown error occurred.' };
   }
@@ -95,3 +82,7 @@ export async function createUser (prevState: FormState, formData: FormData): Pro
     };
   }
 }
+
+type AuthErrorLike = {
+  type?: string;
+};

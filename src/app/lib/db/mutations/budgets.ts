@@ -7,7 +7,7 @@ import {
 } from '../schemas/budgetsSchemas';
 
 // Mutation function to insert a new budget 
-export async function insertBudget(formdata: FormData): Promise <{ message: string; errors?: object }> {
+export async function createBudget(formdata: FormData): Promise <{ message: string; errors?: object }> {
     // First validate the data from the form fields
     const validatedForm = createBudgetSchema.safeParse({
         user_id: formdata.get('user_id'),

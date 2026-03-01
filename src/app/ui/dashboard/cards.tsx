@@ -7,6 +7,7 @@ import {
 } from "@heroui/card";
 
 import  Loading  from "@/app/ui/loadingSpinner";
+import { AddTransactionButton } from "@/app/ui/dashboard/buttons";
 import {
     calculateUserTotalIncome, 
     calculateUserTotalExpense,
@@ -23,6 +24,10 @@ import {
     useEffect,
 } from "react";
 import { useUser } from "@/app/context/sessionDataProvider";
+import { useDashboard } from "@/app/context/dashboardContext";
+import { BalanceCardSkeleton, ExpenseCardSkeleton, IncomeCardSkeleton, AccountsCardSkeleton, CardsGridSkeleton } from "../Skeleletons";
+import AddAccountModal from "./Accounts/add-account-modal";
+
 
 
 
@@ -31,6 +36,9 @@ const cardDate = getDayAndMonth(new Date);
 
 // BalanceCard subcomponent
 function BalanceCard ({balance, isLoading} : {balance: string, isLoading: boolean}) {
+  if (isLoading) {
+    return <BalanceCardSkeleton />;
+  }
 
     return (
       <Card
@@ -43,17 +51,7 @@ function BalanceCard ({balance, isLoading} : {balance: string, isLoading: boolea
           <h1>Balance</h1>
         </CardHeader>
         <CardBody className="flex justify-center text-center text-2xl">
-          {/* display here the result of all accounts sum incomes - expenses for the current month */}
-          {/* { isLoading ? <Loading size="md" color="primary"/> :
-                    balance.startsWith('-') ? (
-                        <h2 className="text-red-500 ">{balance}</h2>
-                    ) : (
-                         <h2>{balance}</h2> 
-                    )
-                } */}
-          {isLoading ? (
-            <Loading size="md" color="primary" />
-          ) : balance ? (
+          { balance ? (
             balance.startsWith("-") ? (
               <h2 className="text-red-500">{balance}</h2>
             ) : (
@@ -74,7 +72,9 @@ function BalanceCard ({balance, isLoading} : {balance: string, isLoading: boolea
 
 // ExpenseCard subcomponent
 function ExpenseCard({expense, isLoading} : {expense: string, isLoading: boolean}){
-
+  if (isLoading) {
+    return <ExpenseCardSkeleton />;
+  }
     return(
         <Card
             className="w-full max-w-full max-h-52 "/* md:w-72 h-36 */
@@ -105,7 +105,9 @@ function ExpenseCard({expense, isLoading} : {expense: string, isLoading: boolean
 
 //IncomeCard subcomponent
 function IncomeCard({income, isLoading} : {income: string, isLoading: boolean}){
-   
+  if (isLoading) {
+    return <IncomeCardSkeleton />;
+  }
     return (
         <Card
             className="w-full max-w-full max-h-52 "/* md:w-72 h-36 */
@@ -134,14 +136,16 @@ function IncomeCard({income, isLoading} : {income: string, isLoading: boolean}){
 }
 
 //AccountsCArd subcomponent
-function AccountsCard({accounts, isLoading} : {accounts: Account[], isLoading: boolean}){
-    
+function AccountsCard({accounts, isLoading, onAddAccount} : {accounts: Account[], isLoading: boolean, onAddAccount: () => void}){
+  if (isLoading) {
+    return <AccountsCardSkeleton />;
+  }
     return (
       <Card
         className="w-full max-w-full max-h-52 "/* md:w-72 h-36 */
         radius="lg"
         isHoverable
-        isPressable
+        //isPressable
       >
         <CardHeader className="text-xl">
           <h1>
@@ -152,12 +156,15 @@ function AccountsCard({accounts, isLoading} : {accounts: Account[], isLoading: b
           {isLoading ? (
             <Loading size="md" color="primary" />
           ) : !accounts || accounts.length === 0 ? (
-            <p className="sm:text-sm">No accounts to display</p>
+            <>
+              <p className="sm:text-sm">No accounts to display</p>
+              <AddTransactionButton onPress={onAddAccount}>Add Account</AddTransactionButton>
+            </>
           ) : (
             accounts.map((account: Account) => (
               <div
                 key={account.account_id}
-                className="h-max w-full rounded-lg flex flex-col p-2 items-center snap-center"
+                className="h-max w-full border-2 border-gry-600 rounded-lg flex flex-col p-2 items-center snap-center"
               >
                 <p className="text-primary-500">{formatCurrency(account.balance)}</p>
                 <p className="text-sm text-gray-500">{account.account_name}</p>
@@ -177,9 +184,11 @@ export default function CardWrapper() {
     const [userTotalExpenses, setUserTotalExpenses] = useState('0');
     const [userBalance, setUserBalance] = useState('0');
     const [userAccounts, setUserAccounts] = useState<Account[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
 
     const user = useUser();
+    const { refreshTrigger } = useDashboard();
 
     //Executes all the services for the Card data fetch
     useEffect( () => {
@@ -203,17 +212,30 @@ export default function CardWrapper() {
             }
         };
         getTotals();
-    }, [user.sessionUser.user_id]); 
+    }, [user.sessionUser.user_id, refreshTrigger]); 
+
+    if (isLoading) {
+      return <CardsGridSkeleton />;
+    }
 
     
+    const handleAddAccount = () => {
+        setIsAddAccountModalOpen(true);
+    };
+
     return(
         <>
         <div className="grid grid-cols-1 grid-rows-1 gap-4 md:grid-cols-2 md:grid-rows-2 lg:flex lg:flex-row justify-between">
             <BalanceCard  balance={userBalance} isLoading={isLoading}/>
             <ExpenseCard expense={userTotalExpenses} isLoading={isLoading}/>
             <IncomeCard income={userTotalIncome} isLoading={isLoading}/>
-            <AccountsCard accounts={userAccounts} isLoading={isLoading}/>
+            <AccountsCard accounts={userAccounts} isLoading={isLoading} onAddAccount={handleAddAccount}/>
         </div>
+        
+        <AddAccountModal 
+            isOpen={isAddAccountModalOpen} 
+            onOpenChange={setIsAddAccountModalOpen}
+        />
         </>
     )
 }

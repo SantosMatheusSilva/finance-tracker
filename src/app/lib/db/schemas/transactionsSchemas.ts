@@ -1,5 +1,9 @@
 import { z } from 'zod';
-
+import { 
+  expenseCategorySchema, 
+  incomeCategorySchema, 
+  transactionTypeSchema 
+} from './categoryEnums';
 
 // TRANSACTIONS SCHEMAS 
 
@@ -10,9 +14,9 @@ export const createTransactionSchema = z.object({
     amount: z.number({
         invalid_type_error: 'Please enter a number grater than 0.',
     }).positive(),
-    transaction_type: z.enum(["Expense", "Income"]),
-    expense_category: z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]).optional(),
-    income_category: z.enum(['salary', 'extra work', 'investents', 'gift', 'other']).optional(),
+    transaction_type: transactionTypeSchema,
+    expense_category: expenseCategorySchema.optional(),
+    income_category: incomeCategorySchema.optional(),
     description: z.string().optional(),
     transaction_date: z.string({
         invalid_type_error: 'Please enter a valid date.',
@@ -30,9 +34,9 @@ export const updateTransactionSchema = z.object({
     amount: z.number({
         invalid_type_error: 'Please enter a number grater than 0.',
     }).positive(),
-    transaction_type: z.enum(["Expense", "Income"]),
-    expense_category: z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]),
-    income_category: z.enum(['salary', 'extra work', 'investents', 'gift', 'other']),
+    transaction_type: transactionTypeSchema,
+    expense_category: expenseCategorySchema,
+    income_category: incomeCategorySchema,
     description: z.union([z.string(), z.null()]),
     transaction_date: z.string().date(),
 })
@@ -49,7 +53,7 @@ export const createExpenseTransactionSchema = z.object({
         invalid_type_error: 'Please enter a number grater than 0.',
     }).positive(),
     transaction_type: z.enum(["Expense"]),
-    expense_category: z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]),
+    expense_category: expenseCategorySchema,
     income_category: z.never(),
     description: z.string().optional(),
     transaction_date: z.string({
@@ -69,7 +73,7 @@ export const createIncomeTransactionSchema = z.object({
         invalid_type_error: 'Please enter a number grater than 0.',
     }).positive(),
     transaction_type: z.enum(["Income"]),
-    income_category: z.enum(['salary', 'extra work', 'investents', 'gift', 'other']),
+    income_category: incomeCategorySchema,
     expense_category: z.never(),
     description: z.string().optional(),
     transaction_date: z.string({
@@ -87,9 +91,9 @@ export const transactionsSchema = z.object({
     user_id: z.number(),
     account_id: z.number(),
     amount:  z.number().positive(),
-    transaction_type: z.enum(["Expense", "Income"]),
-    income_category: z.union([z.enum(['salary', 'extra work', 'investents', 'gift', 'other']), z.null()]),
-    expense_category: z.union([z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]), z.null()]),
+    transaction_type: transactionTypeSchema,
+    income_category: incomeCategorySchema.optional().nullable(),
+    expense_category: expenseCategorySchema.optional().nullable(),
     description: z.string().nullable(),
     transaction_date: z.string().date(),
     created_at: z.string().date(),

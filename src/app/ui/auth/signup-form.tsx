@@ -1,35 +1,44 @@
 'use client'
 import React from "react"
-import { useEffect } from "react";
-import {Form, Input, Button} from "@heroui/react";
-import { createUser } from "@/app/lib/services/userServices";
-import { useRouter } from "next/navigation";
-import { useFormState } from "react-dom";
+import {
+    Form, 
+    Input, 
+    Button
+} from "@heroui/react";
+import LoadingSpinner from "@/app/ui/loadingSpinner";
+import { useActionState } from "react";
+import { signup } from "@/app/auth/signup/action";
+import { useRouter } from "next/navigation";   
+import { useEffect } from "react"; 
+
+type SignupFormState = {
+    success: boolean;
+    error?: string;
+    errors?: {
+      username?: string[];
+      email?: string[];
+      password?: string[];
+      confirmPassword?: string[];
+    };
+  };
 
 export default function SignupForm() {
 
-    const initilalState = {
-        message: '',
-        error: {
-            username: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-        },
-        errors: {},
-    }    
 
-    const [ formState, formAction, isPending ] = useFormState(createUser, initilalState);
+    const [ formState, formAction, isPending ] = useActionState<SignupFormState, FormData>(signup, { success: false, errors: {}, error: ''});
     
     const router = useRouter();
-    // Redirect to login page after successful signup
-    useEffect(() => {
-        if (formState?.message === 'User created successfully') {
+
+
+   useEffect(() => {
+        if (formState.success == true) {
+            console.log('redirecting to login page');
             router.push('/auth/login');
-        }
-    }, [formState, router]);
-
-
+        } 
+    }, [formState.success, router]);
+    
+    
+    
     return (
         <Form action={formAction} /* method="post" */ validationBehavior="native" className="justify-center items-center w-64  md:w-96 h-auto py-5 space-y-4 border-2 border-black my-5 mx-8 rounded-2xl dark:shadow-lg dark:border-white">
             <div className="flex flex-col gap-4 max-w-md">
@@ -41,7 +50,7 @@ export default function SignupForm() {
                 name="username"
                 id="username"
                 type="text"
-                errorMessage= {formState?.errors?.username}
+                errorMessage= {formState?.errors?.username?.[0]}
 
                 />
             </div>
@@ -54,7 +63,7 @@ export default function SignupForm() {
                 name="email"
                 id="email"
                 type="email"
-                errorMessage={formState?.errors?.email}
+                errorMessage={formState?.errors?.email?.[0]}
                 
                 />
             </div>
@@ -67,6 +76,7 @@ export default function SignupForm() {
                 name="password"
                 id="password"
                 type="password"
+                errorMessage={formState?.errors?.password?.[0]}
                 
                 />
             </div>
@@ -79,6 +89,7 @@ export default function SignupForm() {
                 name="confirmPassword"
                 id="confirmPassword"
                 type="password"
+                errorMessage={formState?.errors?.confirmPassword?.[0]}
                 />
             </div>
             <div>
@@ -88,15 +99,15 @@ export default function SignupForm() {
                 color="default"
                 variant="bordered"
                 className="w-full dark:border-white"
-                isLoading={isPending}
+                //isLoading={isPending}
                 disabled={isPending}
                 >
-                    Signup
+                   {isPending ? <LoadingSpinner /> : 'Sign Up'}
                 </Button>
             </div>
             <div>
                 {/* error message */}
-                {formState?.error && <p>{JSON.stringify(formState.error)}</p>} 
+                {formState?.error && <p className="text-red-500">{(formState.error)}</p>} 
             </div>
         </Form>
         )

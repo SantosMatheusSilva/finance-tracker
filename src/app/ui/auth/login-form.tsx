@@ -1,36 +1,49 @@
 'use client'
-import React from "react"
-import { useEffect } from "react";
-import {Form, Input, Button} from "@heroui/react";
-import { authenticate } from "@/app/lib/services/userServices";
-//import { useFormState } from "react-dom";
-import { useActionState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react"
+import {
+    Form, 
+    Input, 
+    Button
+} from "@heroui/react";
 import LoadingSpinner from "@/app/ui/loadingSpinner";
 
-
-
-type AuthFormState =  {
-    success: true;  redirectTo: string; 
-  } | {
-    success: false; error: string;
-  };
-
-//const initialState: AuthFormState = { success: false, error: ''};
+import { signIn } from "next-auth/react";
+//import { useRouter } from "next/navigation";
 
 export default function LoginForm(){
-    const [state, formAction, isPending] = useActionState <AuthFormState, FormData> (authenticate, {success: false, error: ''});
-    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    //const router = useRouter();
 
-    useEffect(() => {
-        if (state.success && state.redirectTo) {
-            router.push(state.redirectTo);
-        }
-    }, [state, router]);
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setIsLoading(true);
+        setError('');
 
-   
+        const formData = new FormData(event.currentTarget);
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+         await signIn('credentials', {
+            redirect: true,
+            email,
+            password,
+            callbackUrl: '/dashboard'
+        });
+
+        setIsLoading(false);
+
+       /*  if (result?.error) {
+            setError(result.error);
+        } else if (result?.ok) {
+            window.location.href = result.url || '/dashboard';
+        } else {
+            setError('An unexpected error occurred.');
+        } */
+    };
+
     return (
-        <Form action={formAction} /* method="post" */ validationBehavior="native" className="justify-center items-center w-64 md:w-96 h-96 space-y-4 border-2 border-black my-5 mx-8 rounded-2xl dark:shadow-lg dark:border-white"> {/*  dark:shadow-cyan-200/50 */}
+        <Form onSubmit={handleSubmit} className="justify-center items-center w-64 md:w-96 h-96 space-y-4 border-2 border-black my-5 mx-8 rounded-2xl dark:shadow-lg dark:border-white">
             <div className="flex flex-col gap-4 max-w-md">
                 <Input className=""
                 required
@@ -56,22 +69,20 @@ export default function LoginForm(){
                 />
             </div>
             <div>
-                    <Button 
-                    type="submit"
-                    size="lg"
-                    color="default"
-                    variant="bordered"
-                    className="w-full dark:border-white"
-                    aria-disabled={!!isPending}
-                    >
-                       {isPending ? <LoadingSpinner /> : 'Login'}
-                    </Button>
-                </div>
-                <div>
-                    {/* error message */}
-                    {!state.success && state.error && <p className="text-red-500">{state.error}</p>}
-                </div>
-            </Form>
+                <Button 
+                type="submit"
+                size="lg"
+                color="default"
+                variant="bordered"
+                className="w-full dark:border-white"
+                aria-disabled={isLoading}
+                >
+                   {isLoading ? <LoadingSpinner /> : 'Login'}
+                </Button>
+            </div>
+            <div>
+                {error && <p className="text-red-500">{error}</p>}
+            </div>
+        </Form>
     )
-
 }

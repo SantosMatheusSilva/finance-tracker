@@ -7,9 +7,9 @@ export const config = {
   // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
   matcher: ['/dashboard/:path*'],
 };  */
-import { auth } from 'auth';
+import { auth } from '@/auth';
 
-export default auth((req) => {
+export default auth((req: any ) => {
   // Optional: Add custom logic
   if (!req.auth) {
     // Handle unauthenticated requests

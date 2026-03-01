@@ -1,4 +1,4 @@
-'use server ' // Runs this file in the server side!
+'use server' // Runs this file in the server side!
 
 import { queryDb } from "../neondb";
 import { 
@@ -11,10 +11,10 @@ import {
 export async function insertAccount(formdata: FormData): Promise<{ message: string; errors?: object}> { // -> maybe add the user id in the parametters 
     // First validate the data from the form fields 
     const validatedForm = createAccountSchema.safeParse({
-        user_id: formdata.get('user_id'),
+        user_id: Number(formdata.get('user_id')),
         account_name: formdata.get('account_name'),
         account_type: formdata.get('account_type'),
-        balance: formdata.get('balance'),
+        balance: Number(formdata.get('balance')),
         currency: formdata.get('currency'),
     });
 

@@ -5,24 +5,38 @@ import TopNavbar from "@/app/ui/dashboard/navbar";
 import { useRef } from "react";
 import { SessionDataProvider } from "../../context/sessionDataProvider";
 import { SessionGuard } from "../../lib/sessionGuard";
-import {use} from "react";
+import { useSession } from "next-auth/react";
+import { TransactionModalProvider } from "../../context/transactionModalContext";
+import { DashboardProvider } from "../../context/dashboardContext";
+import ModalWrapper from "@/app/ui/dashboard/Transactions/modalWrapper";
+import { SessionUser } from "@/app/lib/db/schemas/userSchemas";
 
 export default function DashboardLayout({
     children,
-    params,
+    
 }: {
     children: React.ReactNode;
     params: Promise<{userId: string;}>;
 }
 ) {
     const sideNavRef = useRef(null);
-  const { userId } = use(params);
-  const parsedUserId = parseInt(userId, 10);
+    const { data: session, status } = useSession();
+    
+    if (status === 'loading') {
+        return <div>Loading Session...</div>;
+    }
 
+   /*  if (!session?.user?.id ) {
+        return <div className="text-red-500 font-semibold p-4">Access denied. Please log in.</div>;
+    } */
+
+    const userId = Number((session?.user as SessionUser)?.user_id); 
     return (
         <>
-<SessionDataProvider userId={parsedUserId}>
+          <SessionDataProvider userId={userId}>
          <SessionGuard> 
+        <DashboardProvider>
+        <TransactionModalProvider>
   <div className="flex h-screen flex-col  md:p-5 md:flex-row md:overflow-hidden">
     {/* SideNav (visible in md and lg screens) */}
     <div ref={sideNavRef} className="w-full md:w-64 md:block hidden">
@@ -47,6 +61,9 @@ export default function DashboardLayout({
       </div>
     </div>
   </div>
+  <ModalWrapper />
+        </TransactionModalProvider>
+        </DashboardProvider>
         </SessionGuard> 
   </SessionDataProvider>
 </>

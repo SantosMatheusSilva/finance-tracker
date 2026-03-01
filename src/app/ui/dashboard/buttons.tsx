@@ -136,7 +136,7 @@ export function AddTransactionButton({
     color = 'primary',
     radius = 'sm',
     startContent = <PlusIcon className="size-5"/>,
-    children = <p>Add Transaction</p>,
+    children = <p>Add</p>,
     onPress,
     ...rest
 } : BaseButtonProps) : JSX.Element {

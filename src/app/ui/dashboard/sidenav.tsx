@@ -7,11 +7,11 @@ import { usePathname } from "next/navigation";
 import UserCard from "./user-card";
 import { LogoutButton } from "./buttons";
 import { signOut } from "next-auth/react";
-import { useParams } from "next/navigation";
+
 
 export default function SideNav() {
   const pathname = usePathname();
-  const { userId } = useParams();
+
 
   const isActive = (href: string) => pathname === href;
 
@@ -29,11 +29,11 @@ export default function SideNav() {
       <CardBody className="flex flex-col justify-between my-10">
         <Button
           as={Link}
-          href={`/dashboard/${userId}/overview`}
+          href={`/dashboard`}
           variant="ghost"
           radius="md"
           className={`${
-            isActive(`/dashboard/${userId}/overview`) ? "ring-2 ring-blue-500 border-none" : ""
+            isActive(`/dashboard`) ? "ring-2 ring-blue-500 border-none" : ""
           } `}
         >
           <p className="text-lg">Dashboard</p>
@@ -42,9 +42,9 @@ export default function SideNav() {
           as={Link}
           variant="ghost"
           radius="md"
-          href={`/dashboard/${userId}/transactions`}
+          href={`/dashboard/transactions`}
           className={`${
-            isActive(`/dashboard/${userId}/transactions`)
+            isActive(`/dashboard/transactions`)
               ? "ring-2 ring-blue-500 border-none"
               : ""
           } `}
@@ -55,9 +55,9 @@ export default function SideNav() {
           as={Link}
           variant="ghost"
           radius="md"
-          href={`/dashboard/${userId}/planner`}
+          href={`/dashboard/planner`}
           className={`${
-            isActive(`/dashboard/${userId}/planner`)
+            isActive(`/dashboard/planner`)
               ? "ring-2 ring-blue-500 border-none"
               : ""
           } `}
@@ -69,9 +69,9 @@ export default function SideNav() {
           as={Link}
           variant="ghost"
           radius="md"
-          href={`/dashboard/${userId}/accounts`}
+          href={`/dashboard/accounts`}
           className={`${
-            isActive(`/dashboard/${userId}/accounts`)
+            isActive(`/dashboard/accounts`)
               ? "ring-2 ring-blue-500 border-none"
               : ""
           } `}
@@ -83,9 +83,9 @@ export default function SideNav() {
           as={Link}
           variant="ghost"
           radius="md"
-          href={`/dashboard/${userId}/reports`}
+          href={`/dashboard/reports`}
           className={`${
-            isActive(`/dashboard/${userId}/reports`)
+            isActive(`/dashboard/reports`)
               ? "ring-2 ring-blue-500 border-none"
               : ""
           } `}

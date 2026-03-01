@@ -43,7 +43,8 @@ export const AcmeLogo = () => {
     );
   };
 
-export default function TopNavbar ({ sideNavRef }: NavbarProps) {
+
+export default function TopNavbar ({ sideNavRef }: NavbarProps ) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const {sessionUser} = useUser();
 

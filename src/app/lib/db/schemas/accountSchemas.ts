@@ -6,7 +6,7 @@ import { z } from 'zod';
 export const createAccountSchema = z.object({
     user_id: z.number(),
     account_name: z.string(),
-    account_type: z.enum(['cash', 'bank', 'credit card', 'investment']),
+    account_type: z.enum(['Cash', 'Bank', 'Credit Card', 'Investment']),
     balance: z.number().default(0),
     currency: z.enum(['EUR', 'USD', 'GBP']).default('EUR'),
   });
@@ -17,7 +17,7 @@ export type CreateAccount = z.infer<typeof createAccountSchema>;
 // Schema to update an account
 export const updateAccountSchema = z.object({
     account_name: z.string(),
-    account_type: z.enum(['cash', 'bank', 'credit card', 'investment']),
+    account_type: z.enum(['Cash', 'Bank', 'Credit Card', 'Investment']),
     balance: z.number(),
     currency: z.enum(['EUR', 'USD', 'GBP']),
   });
@@ -30,7 +30,7 @@ export const accountSchema = z.object({
     account_id: z.number(),
     user_id: z.number(),
     account_name: z.string(),
-    account_type: z.enum(['cash', 'bank', 'credit card', 'investment']),
+    account_type: z.enum(['Cash', 'Bank', 'Credit Card', 'Investment']),
     balance: z.number(),
     currency: z.enum(['EUR', 'USD', 'GBP']),
     created_at: z.string().date(),

@@ -24,7 +24,7 @@ export default function TransactionsLayout({
       if (segment === 'dashboard') {
         return {
           name: 'Dashboard',
-          href: `/dashboard/${params.userId}`,
+          href: `/dashboard`,
         };
       }
   

@@ -5,7 +5,121 @@ import {
     createIncomeTransactionSchema,
     updateTransactionSchema,
     createExpenseTransactionSchema,
+    createTransactionSchema,
 } from '../schemas/transactionsSchemas';
+
+// Unified mutation function to create any transaction (Income or Expense)
+export async function createTransaction(formdata: FormData): Promise<{ message: string; errors?: object}> {
+    // First validate the data from the form fields
+    const validatedForm = createTransactionSchema.safeParse({
+        user_id: Number(formdata.get('user_id')),
+        account_id: Number(formdata.get('account_id')),
+        amount: Number(formdata.get('amount')),
+        transaction_type: formdata.get('transaction_type'),
+        expense_category: formdata.get('expense_category') || undefined,
+        income_category: formdata.get('income_category') || undefined,
+        description: formdata.get('description'),
+        transaction_date: formdata.get('transaction_date'),
+    });
+
+    // If the validation fails, return errors, otherwise, continue
+    if (!validatedForm.success) {
+        return{
+        message: 'Missing fields. Failed to create Transaction',
+        errors: validatedForm.error.errors,
+        }
+    }
+
+    // Prepare data for insertion
+    const {
+        user_id,
+        account_id, 
+        amount, 
+        transaction_type,
+        expense_category, 
+        income_category,
+        description, 
+        transaction_date
+    } = validatedForm.data;
+
+    // Insertion block TRY
+    try {
+        if (transaction_type === 'Income') {
+            if (!income_category) {
+                return {
+                    message: 'Income category is required for Income transactions',
+                }
+            }
+            await queryDb`
+            INSERT INTO transactions (
+            user_id, 
+            account_id, 
+            amount, 
+            transaction_type, 
+            income_category, 
+            description,
+            transaction_date
+            )
+            VALUES (
+            ${user_id}, 
+            ${account_id}, 
+            ${amount}, 
+            ${transaction_type}, 
+            ${income_category}, 
+            ${description?? ''}, 
+            ${transaction_date}
+            )`;
+            
+            // Update account balance for income
+            await queryDb`
+            UPDATE accounts 
+            SET balance = balance + ${amount}
+            WHERE account_id = ${account_id}
+            `;
+        } else {
+            if (!expense_category) {
+                return {
+                    message: 'Expense category is required for Expense transactions',
+                }
+            }
+            await queryDb`
+            INSERT INTO transactions (
+            user_id, 
+            account_id, 
+            amount, 
+            transaction_type, 
+            expense_category, 
+            description,
+            transaction_date
+            )
+            VALUES (
+            ${user_id}, 
+            ${account_id}, 
+            ${amount}, 
+            ${transaction_type}, 
+            ${expense_category}, 
+            ${description?? ''}, 
+            ${transaction_date}
+            )`;
+            
+            // Update account balance for expense
+            await queryDb`
+            UPDATE accounts 
+            SET balance = balance - ${amount}
+            WHERE account_id = ${account_id}
+            `;
+        }
+        
+        return {
+            message: `${transaction_type} Transaction created successfully`,
+        }
+    } catch (error) {
+        console.error('Database error', error);
+        return {
+            message: `Failed to create ${transaction_type} Transaction`,
+        }
+    }
+}
 
 // Mutation function to insert an Income Transaction 
 export async function insertIncomeTransaction(formdata: FormData): Promise<{ message: string; errors?: object}> {

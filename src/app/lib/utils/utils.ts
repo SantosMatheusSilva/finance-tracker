@@ -46,3 +46,14 @@ export const formatCurrency = (amount: number): string => {
     const formatter = new Intl.DateTimeFormat(locale, options);
     return formatter.format(date);
   };
+
+  export function getCurrentMonthRange() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0); // last day of month
+  
+    return {
+      startDate: start,
+      endDate: end,
+    };
+  }

@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
+import { Card } from "@heroui/card";
 import { useState, useEffect } from "react";
 //import { SharedSelection } from "@heroui/react";
 import {
@@ -22,22 +23,24 @@ import {
   deleteTransactionById,
 } from "@/app/lib/services/transactionsServices";
 import { Transaction } from "@/app/lib/db/schemas/transactionsSchemas";
-import  AddTransactionModal  from "./add-transaction-modal";
 import { formatCurrency } from "@/app/lib/utils/utils";
-import { ActionButtons, AddTransactionButton } from "./buttons";
-import { ConfirmationModal } from "./confirmation-modal";
-import Loading from "../loadingSpinner";
+import { ActionButtons, AddTransactionButton } from "../buttons";
+import { ConfirmationModal } from "../confirmation-modal";
+//import Loading from "../loadingSpinner";
 import { useUser } from "@/app/context/sessionDataProvider";
+import { useTransactionModal } from "@/app/context/transactionModalContext";
+import { TransactionsTableSkeleton } from "../../Skeleletons";
 
 
 export default function LatestTransactionsTable() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedTransaction, setSelectedTransaction] = useState<number | null>(
     null
   );
-  const {isOpen: isAddModalOpen, onOpen: onAddModalOpen, onClose: onAddModalClose} = useDisclosure();
+  const { openModal } = useTransactionModal();
   const user = useUser();
 
   useEffect(() => {
@@ -46,6 +49,7 @@ export default function LatestTransactionsTable() {
       try {
         const result = await fetchLatestTransactions(user.sessionUser.user_id);
         setTransactions(result);
+        setAllTransactions(result);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching latest transactions", error);
@@ -53,7 +57,19 @@ export default function LatestTransactionsTable() {
     };
     getLatestTransactions();
   }, [user.sessionUser.user_id]);
-  //console.log("transactions --->", transactions);
+  console.log("transactions --->", transactions);
+
+  const sortTransactions = (key: string) => {
+    let sortedTransactions: Transaction[] = [];
+    if (key === "Incomes") {
+      sortedTransactions = allTransactions.filter(transaction => transaction.transaction_type === "Income");
+    } else if (key === "Expenses") {
+      sortedTransactions = allTransactions.filter(transaction => transaction.transaction_type === "Expense");
+    } else {
+      sortedTransactions = allTransactions;
+    }
+    setTransactions(sortedTransactions);
+  };
 
   const columns = [
     {
@@ -113,7 +129,7 @@ export default function LatestTransactionsTable() {
 
   type RowData = {
     key: number;
-    Category: Transaction["expense_category"] |  Transaction["income_category"];
+    Category: string;
     Description: string;
     Amount: string;
     Date: string;
@@ -122,8 +138,9 @@ export default function LatestTransactionsTable() {
 
   const rows = transactions.map((transaction: Transaction) => ({
     key: transaction.transaction_id,
-    Category: transaction.expense_category || transaction.income_category,
-    Description: transaction.transaction_date + " - " + transaction.description,
+    transaction_type: transaction.transaction_type,
+    Category: transaction.expense_category ?? transaction.income_category ?? "-",
+    Description: transaction.description || "-",
     Amount: formatCurrency(transaction.amount),
     Date: transaction.transaction_date,
     Actions: (
@@ -135,8 +152,11 @@ export default function LatestTransactionsTable() {
       </>
     ) as React.ReactNode,
   }));
-
   console.log("rows -->", rows);
+  console.log("transactions categories -->", transactions.map(transaction => transaction.expense_category || transaction.income_category));
+  //console.log("rows -->", rows);
+
+  // Function to get the value of a key in the row data
   const getKeyValue = (obj: RowData, key: keyof RowData): React.ReactNode => {
     const value = obj[key];
 
@@ -145,10 +165,15 @@ export default function LatestTransactionsTable() {
       : JSON.stringify(value); // Convert non-renderable values
   };
 
+  if (isLoading) {
+    return <TransactionsTableSkeleton />;
+  }
   return (
-    <div
-      className="w-full max-w-full overflow-x-auto lg:w-1/2 bg-default-50 rounded-2xl"
-      style={{ height: "440px" }}
+    
+    <Card
+      radius="lg"
+      className="w-full max-w-full overflow-x-auto lg:w-1/2 p-4"
+      style={{ maxHeight: "440px", minHeight: "440px" }}
     >
       {/* Confirmation modal bellow */}
       <ConfirmationModal
@@ -158,24 +183,14 @@ export default function LatestTransactionsTable() {
       >
         <div></div>
       </ConfirmationModal>
-      {/* Add Transaction Modal */}
-      <AddTransactionModal
-        isOpen={isAddModalOpen}
-        onOpen={onAddModalOpen}
-        onCloseAction={onAddModalClose}
-        onClose={onAddModalClose}
-        placement="top-center"
-        //trigger={<AddTransactionButton />}
-      >
-        <div></div>
-      </AddTransactionModal>
+
       <Table
-        className="w-full "
+        className="w-full"
         aria-label="Latest transactions table"
         radius="md"
-        isStriped={true}
+        isStriped
         isHeaderSticky={false}
-        removeWrapper={false}
+        removeWrapper={true}
         isCompact={true}
         topContent={
           <>
@@ -209,18 +224,18 @@ export default function LatestTransactionsTable() {
                     color="primary"
                     onSelectionChange={(keys) => setSelectedKeys(keys.selectedKeys)} */
                   >
-                    <DropdownItem key="All">
+                    <DropdownItem key="All" onPress={() => sortTransactions("All")}>
                       <p>All</p>
                     </DropdownItem>
-                    <DropdownItem key="Incomes">
+                    <DropdownItem key="Incomes" onPress={() => sortTransactions("Incomes")}>
                       <p>Incomes</p>
                     </DropdownItem>
-                    <DropdownItem key="Expenses">
+                    <DropdownItem key="Expenses" onPress={() => sortTransactions("Expenses")}>
                       <p>Expenses</p>
                     </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
-                <AddTransactionButton variant="ghost" size="md" radius="md" onPress={onAddModalOpen}>
+                <AddTransactionButton variant="ghost" size="md" radius="md" onPress={openModal}>
                   Add
                 </AddTransactionButton>
               </div>
@@ -234,22 +249,14 @@ export default function LatestTransactionsTable() {
               key={column.key}
               className={column.className || ""}
               align="center"
-              //allowsSorting={true}
+              allowsSorting={true}
             >
               {column.label}
             </TableColumn>
           ))}
         </TableHeader>
         <TableBody
-          isLoading={true}
-          loadingContent={
-            isLoading && (
-              <div className="flex justify-center mt-60">
-                {" "}
-                <Loading size="lg" />
-              </div>
-            )
-          }
+          isLoading={isLoading}
           emptyContent={rows.length === 0 ? "No rows to display." : undefined}
         >
           {/* Render the rows only when there is data */}
@@ -263,12 +270,20 @@ export default function LatestTransactionsTable() {
                         ? "hidden truncate max-w-[100px] overflow-hidden whitespace-nowrap sm:table-cell"
                         : "whitespace-nowrap"
                     }
+                    
                   >
                     {columnKey === "Actions" ? (
-                      (row.Actions) // Ensure this is ReactNode
+                      row.Actions
+                    ) : columnKey === "Amount" ? (
+                      <span className={row.transaction_type === "Income" ? "text-blue-500" : "text-red-500"}>
+                        {String(row.Amount)}
+                      </span>
+                    ) : columnKey === "Category" ? (
+                      <span className={"font-semibold"}>
+                        {row.Category}
+                      </span>
                     ) : (
-                      
-                      <>{columnKey === "Category" ? String(row.Category) : getKeyValue(row, columnKey as keyof RowData)}</>
+                      getKeyValue(row, columnKey as keyof RowData)
                     )}
                   </TableCell>
                 )}
@@ -277,7 +292,7 @@ export default function LatestTransactionsTable() {
             []}
         </TableBody>
       </Table>
-    </div>
+    </Card>
   );
 }
 

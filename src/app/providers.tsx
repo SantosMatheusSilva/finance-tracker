@@ -1,15 +1,15 @@
 
-import {HeroUIProvider} from "@heroui/react"
-import { SessionProvider } from 'next-auth/react'
-import { auth } from 'auth';
+/* import {HeroUIProvider} from "@heroui/react"
+import { SessionProvider } from 'next-auth/react' */
+import { authOptions } from "@/auth";
+import { getServerSession } from "next-auth";
+import SessionWrapper from "./session-wrapper";
 
 export default async function Providers({children}: { children: React.ReactNode }) {
-  const session = await auth();
+  const session =  await getServerSession(authOptions);
   return (
-    <SessionProvider session={session}>
-    <HeroUIProvider>
+    <SessionWrapper session={session}>
       {children}
-    </HeroUIProvider>
-    </SessionProvider>
+    </SessionWrapper>
   )
 }

@@ -1,7 +1,7 @@
 import { queryDb } from "../neondb";
 import { Transaction } from "../schemas/transactionsSchemas";
 import { formatDateToLocal } from "../../utils/utils";
-
+import { getCurrentMonthRange } from "../../utils/utils";
 
 
 // Function to query user's transactions
@@ -16,11 +16,14 @@ export async function getTransactions(userId: number): Promise<Transaction[]> {
             transactions.amount,
             transactions.transaction_type,
             transactions.transaction_date,
-            transactions.expense_category AS transaction_category,
+            transactions.expense_category,
+            transactions.income_category,
             transactions.description
         FROM transactions
         JOIN accounts ON transactions.account_id = accounts.account_id
-        WHERE transactions.user_id = ${userId}
+        WHERE transactions.user_id = ${userId} 
+        AND transactions.transaction_date >= ${getCurrentMonthRange().startDate.toISOString().split('T')[0]}
+        AND transactions.transaction_date <= ${getCurrentMonthRange().endDate.toISOString().split('T')[0]}
         ORDER BY transactions.transaction_date DESC;
         `;
 
@@ -53,6 +56,8 @@ export async function getExpenseTransactions(userId: number): Promise<Transactio
         FROM transactions
         WHERE transactions.user_id = ${userId}
         AND transactions.transaction_type = 'Expense'
+        AND transactions.transaction_date >= ${getCurrentMonthRange().startDate.toISOString().split('T')[0]}
+        AND transactions.transaction_date <= ${getCurrentMonthRange().endDate.toISOString().split('T')[0]}
         ORDER BY transactions.transaction_date DESC;
         `;
 
@@ -86,6 +91,8 @@ export async function getIncomeTransactions(userId: number): Promise<Transaction
         FROM transactions
         WHERE transactions.user_id = ${userId}
         AND transactions.transaction_type = 'Income'
+        AND transactions.transaction_date >= ${getCurrentMonthRange().startDate.toISOString().split('T')[0]}
+        AND transactions.transaction_date <= ${getCurrentMonthRange().endDate.toISOString().split('T')[0]}
         ORDER BY transactions.transaction_date DESC;
         `;
         

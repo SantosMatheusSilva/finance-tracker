@@ -11,11 +11,51 @@ import {
     formatCurrency, 
     formatDateToLocal, 
 } from "../utils/utils";
+import { createTransaction } from '../db/mutations/transactions';
+import { CreateTransaction } from "../db/schemas/transactionsSchemas";
 
-/* import getServerSession from 'next-auth';
 
-const session = await getServerSession( { req });
-const userId = session?.user?.user_id; */
+export async function createTransactionService(data: CreateTransaction): Promise<{ message: string; errors?: object }> {
+    try {
+        // Convert the data to FormData format
+        const formData = new FormData();
+        formData.append('user_id', data.user_id.toString());
+        formData.append('account_id', data.account_id.toString());
+        formData.append('amount', data.amount.toString());
+        formData.append('transaction_type', data.transaction_type);
+        
+        if (data.transaction_type === 'Income') {
+            formData.append('income_category', data.income_category || '');
+        }
+        
+        if (data.transaction_type === 'Expense') {
+            formData.append('expense_category', data.expense_category || '');
+        }
+        
+        if (data.description) {
+            formData.append('description', data.description);
+        }
+        
+        formData.append('transaction_date', data.transaction_date);
+
+        // Debug: Log what's being sent to the mutation
+      /*   console.log('FormData contents:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        } */
+
+        // Call the mutation
+        const result = await createTransaction(formData);
+        console.log('Mutation result:', result);
+        return result;
+    } catch (error) {
+        console.error('Service error:', error);
+        return {
+            message: 'Failed to create transaction',
+        };
+    }
+}
+
 
 // function to get the latest transactios (expenses and inocmes) => LATEST TRANSACTIONS TABLE 
 export const fetchLatestTransactions = async (userId: number, limit: number = 15) => {
@@ -116,21 +156,41 @@ export const calculateUserTotalExpense = async (userId: number) => {
 export const calculateUserBalance = async (userId: number) => {
 
    try{
-    const transactions = await getTransactions(userId)
-    const balance = transactions.reduce((sum, transaction) => {
-        const amount = transaction.amount; // or Number(transaction.amount)
-        if (transaction.transaction_type === 'Expense') {
-            return sum - amount;
-        } else {
-            return sum + amount;
-        }
+    // Get account balances (these are already updated with transactions)
+    const { fetchAccounts } = await import('./accountsServices');
+    const accounts = await fetchAccounts(userId);
+    const totalBalance = accounts.reduce((sum, account) => {
+        const balance = Number(account.balance) || 0;
+        return sum + balance;
     }, 0);
-    const formattedBalance = formatCurrency(balance);
+    
+    const formattedBalance = formatCurrency(totalBalance);
     return formattedBalance;
    } catch(error) {
     console.error('Database error', error);
     throw new Error('Failed to fetch balance.')
    }
+}
+
+//FUNCTION TO GET THE USER'S TOTALs FOR INCOMES AND EXPENSES BY MONTH 
+export async function getMonthlyTotals(userId: number) {
+  const incomeTransactions = await getIncomeTransactions(userId);
+  const expenseTransactions = await getExpenseTransactions(userId);
+
+  const income = new Array(12).fill(0);
+  const expenses = new Array(12).fill(0);
+
+  for (const t of incomeTransactions) {
+    const month = new Date(t.transaction_date).getMonth(); // 0–11
+    income[month] += Number(t.amount);
+  }
+
+  for (const t of expenseTransactions) {
+    const month = new Date(t.transaction_date).getMonth();
+    expenses[month] += Number(t.amount);
+  }
+
+  return { income, expenses };
 }
 
 // RECURRINGS //

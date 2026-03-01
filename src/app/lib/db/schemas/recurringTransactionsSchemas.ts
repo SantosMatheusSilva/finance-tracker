@@ -1,5 +1,9 @@
 import { z } from 'zod';
-
+import { 
+  expenseCategorySchema, 
+  incomeCategorySchema, 
+  transactionTypeSchema 
+} from './categoryEnums';
 
 // RECURRING TRANSACTIONS SCHEMAS
 
@@ -10,9 +14,9 @@ export const createRecurringTransactionSchema = z.object({
     amount: z.number({
         invalid_type_error: 'Please enter a number grater than 0.',
     }).positive(),
-    transaction_type: z.enum(["Expense", "Income"]),
-    expense_category: z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]).optional(),
-    income_category: z.enum(['salary', 'extra work', 'investents', 'gift', 'other']).optional(),
+    transaction_type: transactionTypeSchema,
+    expense_category: expenseCategorySchema.optional(),
+    income_category: incomeCategorySchema.optional(),
     description: z.string().optional(),
     start_date: z.string({
         invalid_type_error: 'Please enter a valid date.',
@@ -38,9 +42,9 @@ export const updateRecurringTransactionSchema = z.object({
     amount: z.number({
         invalid_type_error: 'Please enter a number grater than 0.',
     }).positive().gt(0),
-    transaction_type: z.enum(["Expense", "Income"]),
-    expense_category: z.enum(["health", "food", "education", "housing", "transport", "entertaiment", "utilities", "other"]),
-    income_category: z.enum(['salary', 'extra work', 'investents', 'gift', 'other']),
+    transaction_type: transactionTypeSchema,
+    expense_category: expenseCategorySchema,
+    income_category: incomeCategorySchema,
     description: z.string(),
     start_date: z.string({
         invalid_type_error: 'Please enter a valid date.',
@@ -66,9 +70,9 @@ export const getRecurringTransactionsSchema = z.object({
     user_id: z.number(),
     account_id: z.number(),
     amount: z.number().positive(),
-    transaction_type: z.string(),
-    income_category: z.union([z.string(), z.null()]),
-    expense_category: z.union([z.string(), z.null()]),
+    transaction_type: transactionTypeSchema,
+    income_category: z.union([incomeCategorySchema, z.null()]),
+    expense_category: z.union([expenseCategorySchema, z.null()]),
     description: z.string().nullable(),
     start_date: z.string().date(),
     end_date: z.string().date().nullable(),

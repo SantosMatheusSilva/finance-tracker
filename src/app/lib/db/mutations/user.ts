@@ -5,7 +5,7 @@ import {
     createUserSchema 
 } from "../schemas/userSchemas";
 //import { redirect } from "next/navigation";
-import  bcrypt  from "bcrypt";
+import  bcrypt  from "bcryptjs";
 
 export async function insertUser(formdata: FormData): Promise<{ message: string; errors?: object}> {
     try {
@@ -19,7 +19,7 @@ export async function insertUser(formdata: FormData): Promise<{ message: string;
 
         // If the validation fails, return erros, otherwise, continue
         if (!validatedForm.success) {
-            return { message: 'Validation failed', errors: validatedForm.error };    
+            return { message: 'Validation failed', errors: validatedForm.error.flatten().fieldErrors };    
         }
         // Check if the email already exists
         const existingUser = await queryDb`SELECT * FROM users WHERE email=${validatedForm.data.email}`;
@@ -51,7 +51,6 @@ export async function insertUser(formdata: FormData): Promise<{ message: string;
             ${email},
             ${password}
         )`;
-        console.log('User inserted successfully');
         
         // Insertion block CATCH
         } catch (error) {
@@ -65,4 +64,5 @@ export async function insertUser(formdata: FormData): Promise<{ message: string;
                 message: 'User created successfully',
             }
         ) 
+
 }

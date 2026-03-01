@@ -10,8 +10,10 @@ import {
     ClipboardDocumentListIcon
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { useTransactionModal } from "@/app/context/transactionModalContext";
 
 export default function BottomNav() {
+    const { openModal } = useTransactionModal();
 
     return(
         <Card
@@ -28,7 +30,7 @@ export default function BottomNav() {
                     <Squares2X2Icon  className="size-8" />
                 </Link>
                 <Link href={""}>
-                    <PlusCircleIcon className="size-20 text-primary-500" />
+                    <PlusCircleIcon className="size-20 text-primary-500" onClick={openModal}/>
                 </Link>
                 <Link href={"/dashboard/accounts"}>
                     <CreditCardIcon className="size-8" />
