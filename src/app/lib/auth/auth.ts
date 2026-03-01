@@ -1,6 +1,7 @@
 // lib/auth.ts
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
+import { getUser } from "@/auth";
 
 export function auth() {
   return getServerSession(authOptions);
@@ -8,8 +9,12 @@ export function auth() {
 
 export async function getUserId(): Promise<string> {
   const session = await auth();
-  if (!session?.user?.id) {
-    throw new Error('Unauthorized');
+  if (!session || !session?.user?.email) {
+    throw new Error("Unauthorized");
   }
-  return session.user.id;
+  const user = await getUser(session.user.email);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return String(user.user_id);
 }
